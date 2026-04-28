@@ -1,0 +1,162 @@
+.filters { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.select  { padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--r); font-size: 12px; font-family: inherit; color: var(--text); background: var(--white); }
+
+/* ── Selection action bar ── */
+.actionBar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--brand); color: #fff;
+  border-radius: var(--r); padding: 10px 14px;
+  margin-bottom: 10px; gap: 12px;
+  overflow: hidden;
+  max-height: 0; opacity: 0; margin-bottom: 0;
+  transition: max-height 240ms var(--spring),
+              opacity     200ms var(--ease-out),
+              margin-bottom 240ms var(--spring);
+  pointer-events: none;
+}
+.actionBarVisible {
+  max-height: 60px; opacity: 1;
+  margin-bottom: 10px;
+  pointer-events: auto;
+}
+
+.actionBarLeft  { display: flex; align-items: center; gap: 10px; }
+.actionBarRight { display: flex; align-items: center; gap: 8px; }
+
+.actionBarClear {
+  width: 26px; height: 26px; border-radius: 6px;
+  background: rgba(255,255,255,0.15); border: none;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.actionBarClear:hover { background: rgba(255,255,255,0.28); }
+
+.actionBarCount { font-size: 13px; font-weight: 500; }
+.actionBarCount strong { font-weight: 700; }
+
+.actionBtnExport,
+.actionBtnDelete {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 13px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  transition: background var(--dur-fast) var(--ease-out),
+              transform  var(--dur-fast) var(--ease-out);
+}
+.actionBtnExport:active, .actionBtnDelete:active { transform: scale(0.97); }
+
+.actionBtnExport {
+  background: rgba(255,255,255,0.18);
+  border: 1.5px solid rgba(255,255,255,0.35);
+  color: #fff;
+}
+.actionBtnExport:hover { background: rgba(255,255,255,0.28); }
+
+.actionBtnDelete {
+  background: #c0392b;
+  border: 1.5px solid #a93226;
+  color: #fff;
+}
+.actionBtnDelete:hover:not(:disabled) { background: #a93226; }
+.actionBtnDelete:disabled { opacity: 0.65; cursor: not-allowed; }
+
+/* ── Custom checkboxes ── */
+.checkCol { width: 40px; padding-left: 14px !important; padding-right: 4px !important; }
+
+.checkLabel {
+  display: flex; align-items: center; cursor: pointer;
+  width: 18px; height: 18px; position: relative;
+}
+.checkInput {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.checkBox {
+  width: 16px; height: 16px; border-radius: 4px;
+  border: 1.5px solid var(--border); background: var(--white);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  transition: background var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+  position: relative;
+}
+.checkInput:checked  + .checkBox { background: var(--brand); border-color: var(--brand); }
+.checkInput:checked  + .checkBox::after {
+  content: ''; position: absolute;
+  width: 9px; height: 5px;
+  border-left: 2px solid #fff; border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translate(0px, -1px);
+}
+/* Indeterminate state */
+.checkInput:indeterminate + .checkBox { background: var(--brand); border-color: var(--brand); }
+.checkInput:indeterminate + .checkBox::after {
+  content: ''; position: absolute;
+  width: 8px; height: 2px; background: #fff; border-radius: 1px;
+}
+.checkLabel:hover .checkBox { border-color: var(--brand); }
+
+/* ── Row selected state ── */
+.rowSelected td { background: var(--brand-light) !important; }
+.detailRowSelected td { background: #e8e8f4 !important; }
+
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); border-bottom: 2px solid var(--border); }
+.table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.row:hover td { background: var(--surface); }
+
+.subtext { font-size: 11px; color: var(--muted); }
+.pct     { font-size: 12px; font-weight: 600; }
+.bar     { height: 5px; border-radius: 99px; background: var(--border); margin-top: 4px; }
+.barFill { height: 5px; border-radius: 99px; }
+
+.detailRow td { background: var(--surface); padding: 0 !important; }
+
+.detailContent {
+  overflow: hidden;
+  background: var(--surface);
+  will-change: opacity, transform;
+}
+.slideDown {
+  animation: expandDown 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.slideUp {
+  animation: collapseUp 200ms cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+@keyframes expandDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes collapseUp {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-10px); }
+}
+
+.detailInner { padding: 12px 16px 16px; }
+
+.taskRow  { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; padding: 3px 0; flex-wrap: wrap; }
+.taskName { flex: 1; min-width: 0; }
+.ts       { font-size: 11px; font-weight: 600; color: var(--success); background: var(--success-bg); padding: 1px 7px; border-radius: 20px; flex-shrink: 0; }
+.noteText { font-size: 11px; color: var(--muted); font-style: italic; width: 100%; padding-left: 16px; }
+
+.detailTabs { display: flex; gap: 6px; margin-bottom: 12px; }
+.detailTab {
+  padding: 5px 14px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--white);
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  font-family: inherit; color: var(--muted);
+  transition: background var(--dur-fast) var(--ease-out),
+              color      var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              opacity    var(--dur-fast) var(--ease-out);
+}
+.detailTab:hover:not(.detailTabActive) { border-color: var(--brand); color: var(--brand); }
+.detailTabActive                       { background: var(--brand); color: #fff; border-color: var(--brand); }
+.detailTabActive:hover                 { background: var(--brand); color: #fff; opacity: 0.85; }
+
+.logPost {
+  background: var(--surface); border-radius: var(--r);
+  padding: 14px; font-size: 13px; line-height: 1.75;
+  color: var(--text); white-space: pre-wrap;
+  border-left: 3px solid var(--brand);
+  font-family: 'Segoe UI', sans-serif;
+}
+.noLog { font-size: 13px; color: var(--muted); font-style: italic; padding: 8px 0; }

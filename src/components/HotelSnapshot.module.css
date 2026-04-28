@@ -1,0 +1,153 @@
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #1B1B6B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 3px;
+}
+
+.shiftBadge {
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  padding: 2px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+}
+
+.agentName {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.dot { font-size: 11px; color: var(--muted); }
+
+.time {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.oldBadge {
+  font-size: 10px;
+  font-weight: 600;
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+/* ── Big stats row ── */
+.bigRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+
+.statBig {
+  padding: 14px 10px 12px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.statBig:last-child { border-right: none; }
+
+.statBigVal {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1B1B6B;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.statBigLbl {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ── Divider ── */
+.divider { border-top: 1px solid var(--border); }
+
+/* ── Small stats row ── */
+.smRow {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.statSm {
+  flex: 1 1 calc(100% / 8);
+  min-width: 70px;
+  padding: 10px 8px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.statSm:last-child { border-right: none; }
+
+.statSmVal {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.statSmHighlight { color: #d97706; }
+
+.statSmLbl {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  line-height: 1.3;
+}

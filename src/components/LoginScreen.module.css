@@ -1,0 +1,60 @@
+.wrap {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px;
+}
+
+.logo {
+  width: 64px; height: 64px; background: var(--brand);
+  border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+}
+
+.title { font-size: 22px; font-weight: 700; color: var(--brand); margin-bottom: 4px; }
+.sub   { font-size: 13px; color: var(--muted); margin-bottom: 24px; text-align: center; }
+
+.section { width: 100%; max-width: 600px; margin-bottom: 20px; }
+.sectionLabel {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--muted); margin-bottom: 8px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--rlg); padding: 16px 12px;
+  text-align: center; cursor: pointer; font-family: inherit;
+  position: relative;
+  transition: background  var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              transform   var(--dur-fast) var(--ease-out);
+}
+.card:active { transform: scale(0.97); }
+.card:hover { border-color: var(--brand); background: var(--brand-light); }
+.adminCard  { border-color: #c4b5fd; background: #faf8ff; }
+.adminCard:hover { border-color: #7c3aed; background: #ede9fe; }
+.sharedCard { border-color: #d6a96e; background: #fffbf0; }
+.sharedCard:hover { border-color: #92400e; background: #fef3c7; }
+
+.avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  color: #fff; font-size: 16px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 8px;
+}
+
+.name { font-size: 13px; font-weight: 600; color: var(--text); }
+.role { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.adminTag {
+  position: absolute; top: 6px; right: 8px;
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; color: #6d28d9; background: #ede9fe;
+  padding: 2px 6px; border-radius: 20px;
+}

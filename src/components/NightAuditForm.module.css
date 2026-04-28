@@ -1,0 +1,158 @@
+.wrap { /* full-width within the card */ }
+
+/* ── Section header ── */
+.section { margin-bottom: 16px; }
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--brand);
+  margin-bottom: 10px;
+}
+
+/* ── 3-column metrics table ── */
+.tableWrap {
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.tableHead {
+  display: grid;
+  grid-template-columns: 155px repeat(3, 1fr);
+  background: var(--brand);
+}
+
+.labelCorner {
+  border-right: 1px solid rgba(255,255,255,0.18);
+}
+
+.colHead {
+  padding: 8px 6px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  border-left: 1px solid rgba(255,255,255,0.18);
+}
+
+.colHead.newCol {
+  background: rgba(255,255,255,0.12);
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 155px repeat(3, 1fr);
+  border-top: 1px solid var(--border);
+  transition: background 0.1s;
+}
+
+.tableRow:hover { background: var(--brand-light); }
+
+.rowLabel {
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.tableInput {
+  width: 100%;
+  padding: 7px 6px;
+  border: none;
+  border-left: 1px solid var(--border);
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  background: transparent;
+  text-align: center;
+  transition: background 0.1s;
+}
+
+.tableInput:focus {
+  outline: none;
+  background: #fff;
+  border-left-color: var(--brand-mid);
+}
+
+.tableInput.newInput {
+  background: #f0f4ff;
+  font-weight: 600;
+}
+
+.tableInput.newInput:focus {
+  background: #e5ecff;
+}
+
+/* ── Activity grid (4 number fields in a row) ── */
+.actGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 12px;
+}
+
+@media (min-width: 560px) {
+  .actGrid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ── Count + collapsing-detail group ── */
+.countGroup {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.countGroup .countField { width: 140px; flex-shrink: 0; }
+.countGroup .detailField { flex: 1; min-width: 200px; }
+
+/* ── Textarea ── */
+.textarea {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  resize: vertical;
+  min-height: 56px;
+  line-height: 1.5;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--brand);
+  background: var(--white);
+}
+
+/* ── Responsive: tighter label on mobile ── */
+@media (max-width: 520px) {
+  .tableHead,
+  .tableRow {
+    grid-template-columns: 110px repeat(3, 1fr);
+  }
+  .rowLabel {
+    font-size: 11px;
+    padding: 7px 6px;
+  }
+  .tableInput {
+    font-size: 11px;
+    padding: 7px 3px;
+  }
+}

@@ -1,0 +1,72 @@
+.wrap { display: flex; flex-direction: column; gap: 24px; }
+
+.section {}
+.sectionHeader { margin-bottom: 12px; }
+.sectionTitle  { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.sectionSub    { font-size: 12px; color: var(--muted); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+
+.card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--rlg); padding: 14px;
+  transition: transform var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+}
+.card:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(27,27,107,0.10); }
+.card:active { transform: scale(0.97); box-shadow: none; }
+.adminCard { border-color: #c7b8f5; background: #faf8ff; }
+
+.cardTop { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.avatar  { width: 40px; height: 40px; border-radius: 50%; color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.info    {}
+.nameRow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.name    { font-size: 14px; font-weight: 600; color: var(--text); }
+.role    { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.adminBadge {
+  font-size: 10px; font-weight: 600; padding: 2px 7px;
+  border-radius: 20px; background: #ede9fe; color: #6d28d9;
+  flex-shrink: 0;
+}
+
+.actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.addBtn {
+  width: 100%; padding: 12px;
+  border: 1.5px dashed var(--border); border-radius: var(--rlg);
+  background: transparent; font-size: 13px; color: var(--muted);
+  cursor: pointer; font-family: inherit;
+  min-height: 80px; display: flex; align-items: center; justify-content: center;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              color        var(--dur-fast) var(--ease-out);
+}
+.addBtn:hover { border-color: var(--brand); color: var(--brand); }
+.addAdminBtn:hover { border-color: #6d28d9; color: #6d28d9; }
+
+.sharedPinNotice {
+  background: #fffbea; border: 1px solid #f6d860;
+  border-radius: var(--r); padding: 14px;
+}
+.sharedPinTitle { font-size: 13px; font-weight: 600; color: #92400e; margin-bottom: 4px; }
+.sharedPinText  { font-size: 12px; color: #78350f; line-height: 1.6; }
+.sharedPinText code { background: #fef3c7; padding: 1px 5px; border-radius: 4px; font-size: 11px; }
+
+.wideModal { max-width: 420px !important; }
+
+.adminToggle { margin: 12px 0 4px; }
+.toggleLabel {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--text); cursor: pointer;
+}
+.toggleLabel input[type="checkbox"] {
+  width: 16px; height: 16px; cursor: pointer; accent-color: var(--brand);
+}
+
+.adminInfo {
+  background: #ede9fe; color: #5b21b6;
+  border-radius: var(--r); padding: 10px 12px;
+  font-size: 12px; margin: 10px 0 4px;
+  border: 1px solid #c4b5fd;
+}

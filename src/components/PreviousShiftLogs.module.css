@@ -1,0 +1,114 @@
+.card {
+  background: var(--white);
+  border: 1.5px solid var(--brand-mid);
+  border-radius: var(--rlg);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+/* Loading state */
+.loadingRow {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px;
+  font-size: 12px; color: var(--muted);
+}
+
+/* Header / toggle button */
+.header {
+  width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 16px;
+  background: var(--brand-light);
+  border: none; cursor: pointer; font-family: inherit;
+  text-align: left;
+  transition: background var(--dur-fast) var(--ease-out);
+  gap: 8px;
+}
+.header:hover { background: #e2e2f4; }
+
+.headerLeft  { display: flex; align-items: center; gap: 7px; }
+.headerRight { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+.icon  { color: var(--brand); flex-shrink: 0; }
+.title { font-size: 13px; font-weight: 700; color: var(--brand); }
+
+.badge {
+  font-size: 10px; font-weight: 700;
+  background: var(--brand); color: #fff;
+  padding: 1px 7px; border-radius: 20px;
+}
+
+.summary {
+  font-size: 11px; color: var(--brand-mid);
+  font-weight: 500;
+}
+
+.chevron {
+  color: var(--brand);
+  transition: transform var(--dur-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+.chevronOpen { transform: rotate(180deg); }
+
+/* Expanded body */
+.body {
+  border-top: 1px solid var(--border);
+  will-change: opacity, transform;
+}
+.slideDown { animation: expandDown 280ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.slideUp   { animation: collapseUp 220ms cubic-bezier(0.45, 0, 0.55, 1) both; }
+
+@keyframes expandDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes collapseUp {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+/* Individual shift entry */
+.entry { padding: 14px 16px; }
+.entryDivider { border-bottom: 1px solid var(--border); }
+
+.entryHeader {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 10px; margin-bottom: 10px; flex-wrap: wrap;
+}
+
+.entryMeta  { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.shiftName  { font-size: 13px; font-weight: 700; color: var(--brand); }
+.dot        { font-size: 11px; color: var(--muted); }
+.agentName  { font-size: 13px; font-weight: 500; color: var(--text); }
+.entryDate  { font-size: 11px; color: var(--muted); }
+
+.pct        { font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.pctSub     { font-size: 11px; font-weight: 400; color: var(--muted); }
+
+.logText {
+  background: var(--surface); border-radius: var(--r); padding: 12px 14px;
+  font-size: 12px; line-height: 1.75; color: var(--text);
+  white-space: pre-wrap; border-left: 3px solid var(--brand);
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+}
+.noLog { font-size: 12px; color: var(--muted); font-style: italic; }
+
+/* Attachment chips */
+.attachList {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.attachChip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 500;
+  color: var(--brand);
+  background: var(--brand-light);
+  border: 1px solid var(--brand-mid);
+  border-radius: 20px;
+  padding: 3px 10px;
+  text-decoration: none;
+  transition: background var(--dur-fast);
+}
+.attachChip:hover { background: #e2e2f4; text-decoration: underline; }

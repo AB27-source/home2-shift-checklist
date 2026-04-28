@@ -1,0 +1,75 @@
+/* Dashboard.module.css */
+.wrap   { max-width: 1280px; margin: 0 auto; padding: 20px 24px; }
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
+.title  { font-size: 20px; font-weight: 700; color: var(--brand); }
+.tabs   { display: flex; gap: 6px; }
+.tab    {
+  padding: 6px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  background: var(--surface); color: var(--muted); font-family: inherit;
+  transition: background var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              opacity var(--dur-fast) var(--ease-out);
+}
+.tab:hover:not(.active) { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+.tab.active             { background: var(--brand); color: #fff; border-color: var(--brand); }
+.tab.active:hover       { background: var(--brand); color: #fff; opacity: 0.85; }
+
+/* ── Stats row ── */
+.statsGrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+.statCard  { background: var(--white); border: 1px solid var(--border); border-radius: var(--rlg); padding: 16px 18px; }
+.statNum   { font-size: 28px; font-weight: 700; color: var(--brand); line-height: 1; }
+.statLbl   { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+/* ── Snapshot two-column grid ── */
+.snapshotGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+  align-items: start;
+}
+
+/* ── Below-the-fold section spacing ── */
+.belowGrid { display: flex; flex-direction: column; gap: 16px; }
+
+/* ── Active handoff banner ── */
+.handoffBanner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fffbea;
+  border: 1px solid #f6d860;
+  border-radius: var(--r);
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: #7a5f00;
+  line-height: 1.5;
+}
+
+.handoffBody {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+}
+
+.handoffClear {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid #d4a800;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #7a5f00;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.12s;
+}
+.handoffClear:hover    { background: rgba(246,216,96,0.3); }
+.handoffClear:disabled { opacity: 0.5; cursor: not-allowed; }

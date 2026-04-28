@@ -1,0 +1,76 @@
+.item {
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  transition: border-color var(--dur-normal) var(--ease-out),
+              background   var(--dur-normal) var(--ease-out);
+}
+.item.done { border-color: #a5d6a7; background: #f1faf2; }
+
+.row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px;
+}
+
+.check {
+  width: 20px; height: 20px;
+  border-radius: 5px;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--white);
+  transition: background var(--dur-fast) var(--spring),
+              border-color var(--dur-fast) var(--spring);
+}
+.done .check { background: var(--brand); border-color: var(--brand); }
+
+.info { flex: 1; min-width: 0; }
+.name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; }
+.done .name { color: var(--success); }
+
+.meta {
+  font-size: 11px; color: var(--muted);
+  margin-top: 2px;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+
+.ts {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 11px; font-weight: 600;
+  color: var(--success); background: var(--success-bg);
+  padding: 1px 7px; border-radius: 20px;
+  animation: tsIn var(--dur-normal) var(--ease-out) both;
+}
+@keyframes tsIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.noteBtn {
+  font-size: 11px; padding: 3px 10px;
+  border: 1px solid var(--border); border-radius: 20px;
+  background: transparent; color: var(--muted);
+  cursor: pointer; font-family: inherit; flex-shrink: 0;
+  transition: background  var(--dur-fast) var(--ease-out),
+              color       var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+.noteBtn:hover  { border-color: var(--brand); color: var(--brand); }
+.noteBtn.hasNote { border-color: var(--brand-mid); color: var(--brand); background: var(--brand-light); }
+
+.noteArea {
+  padding: 0 12px 10px 42px;
+  animation: noteIn 200ms var(--ease-out) both;
+}
+@keyframes noteIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.noteArea textarea {
+  width: 100%; padding: 7px 10px;
+  border: 1px solid var(--border); border-radius: var(--r);
+  font-size: 12px; font-family: inherit; color: var(--text);
+  background: var(--surface); resize: vertical; min-height: 48px;
+}
+.noteArea textarea:focus { outline: none; border-color: var(--brand); }

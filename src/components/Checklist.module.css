@@ -1,0 +1,385 @@
+.handoff {
+  background: #fffbea; border: 1px solid #f6d860;
+  border-radius: var(--r); padding: 12px; margin-bottom: 12px;
+  font-size: 13px; color: var(--text);
+}
+
+.shiftLabel { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 8px; }
+
+.shiftTabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.shiftTab {
+  padding: 7px 16px; border-radius: 20px;
+  border: 1.5px solid var(--border);
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; background: var(--surface); color: var(--muted);
+  font-family: inherit;
+  transition: background var(--dur-fast) var(--ease-out),
+              color      var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              opacity    var(--dur-fast) var(--ease-out);
+}
+.shiftTab:hover:not(.active) { border-color: var(--brand); color: var(--brand); }
+.shiftTab.active             { background: var(--brand); color: #fff; border-color: var(--brand); }
+.shiftTab.active:hover       { background: var(--brand); color: #fff; opacity: 0.85; }
+
+.agentBadge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--brand-light); border: 1px solid var(--brand-mid);
+  color: var(--brand); border-radius: 20px; padding: 5px 12px;
+  font-size: 13px; font-weight: 600; margin-bottom: 12px;
+}
+
+.metaGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 10px; }
+
+.tasksHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.tasksTitle  { font-size: 13px; font-weight: 600; }
+.tasksCount  { font-size: 12px; color: var(--muted); }
+
+.progressWrap { margin-bottom: 10px; }
+.progressBg   { background: var(--surface); border-radius: 99px; height: 6px; border: 1px solid var(--border); overflow: hidden; }
+.progressFill { height: 6px; width: 100%; background: var(--brand); border-radius: 99px; transform-origin: left; transition: transform 400ms var(--spring); }
+
+.taskList { display: flex; flex-direction: column; gap: 5px; }
+
+.actions { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.actions .btn { flex: 1; min-width: 160px; }
+
+.statRow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.statBox { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 12px; text-align: center; }
+.statNum { font-size: 24px; font-weight: 700; color: var(--brand); }
+.statLbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.cardHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.cardTitle  { font-size: 13px; font-weight: 600; }
+
+.postPreview {
+  background: var(--surface); border-radius: var(--r); padding: 14px;
+  font-size: 13px; line-height: 1.75; color: var(--text);
+  white-space: pre-wrap; border-left: 3px solid var(--brand);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.summaryRow { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--surface); }
+.summaryRow:last-child { border-bottom: none; }
+.summaryName { font-size: 13px; font-weight: 500; }
+.summaryTime { font-size: 11px; color: var(--muted); font-weight: 400; }
+.summaryTs   { font-size: 11px; font-weight: 600; color: var(--success); background: var(--success-bg); padding: 1px 7px; border-radius: 20px; margin-left: 4px; }
+.summaryNote { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 2px; }
+
+/* ── Shift conflict warning ───────────────────────────── */
+.conflictBanner {
+  background: #fff8e1;
+  border: 1.5px solid #f6b800;
+  border-radius: var(--r);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  display: flex; flex-direction: column; gap: 12px;
+  animation: bannerIn 220ms var(--ease-out) both;
+}
+
+.conflictHeader {
+  display: flex; align-items: flex-start; gap: 12px;
+}
+
+.conflictIcon {
+  color: #b45309; flex-shrink: 0; margin-top: 1px;
+}
+
+.conflictTitle {
+  font-size: 14px; font-weight: 700; color: #78350f;
+  margin-bottom: 3px;
+}
+
+.conflictSub {
+  font-size: 13px; color: #92400e; line-height: 1.5;
+}
+
+.conflictSuggest {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap;
+}
+
+.conflictSuggestLabel {
+  font-size: 12px; font-weight: 600; color: #78350f;
+  white-space: nowrap;
+}
+
+.conflictSuggestBtns {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+
+.conflictSwitchBtn {
+  padding: 6px 14px; border-radius: 20px;
+  background: #fff; border: 1.5px solid #f6b800;
+  color: #78350f; font-size: 12px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  transition: background var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              transform   var(--dur-fast) var(--ease-out);
+}
+.conflictSwitchBtn:hover  { background: #f6b800; color: #fff; border-color: #f6b800; }
+.conflictSwitchBtn:active { transform: scale(0.97); }
+
+.conflictAllTaken {
+  font-size: 12px; color: #92400e; font-style: italic;
+}
+
+/* ── Choice screen (already-submitted flow) ───────────── */
+.choiceWrap {
+  display: flex; align-items: center; justify-content: center;
+  min-height: calc(100vh - 56px); padding: 24px 16px;
+}
+
+.choiceCard {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+  padding: 36px 32px; max-width: 420px; width: 100%;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  animation: choiceCardIn 280ms var(--spring) both;
+}
+
+@keyframes choiceCardIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.choiceIcon {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: var(--brand-light); color: var(--brand);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 18px;
+}
+
+.choiceTitle {
+  font-size: 17px; font-weight: 700; color: var(--text);
+  margin: 0 0 6px;
+}
+
+.choiceSub {
+  font-size: 13px; color: var(--muted);
+  margin: 0 0 22px;
+}
+
+.choiceOptions {
+  display: flex; flex-direction: column; gap: 10px; width: 100%;
+}
+
+.choiceBtnPrimary,
+.choiceBtnSecondary {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; padding: 13px 16px;
+  border-radius: 10px; cursor: pointer;
+  font-family: inherit; font-size: 13px;
+  text-align: left;
+  transition: background var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
+}
+
+.choiceBtnPrimary {
+  background: var(--brand); color: #fff;
+  border: 1.5px solid var(--brand);
+}
+.choiceBtnPrimary:hover  { opacity: 0.88; }
+.choiceBtnPrimary:active { transform: scale(0.98); }
+
+.choiceBtnSecondary {
+  background: var(--surface); color: var(--text);
+  border: 1.5px solid var(--border);
+}
+.choiceBtnSecondary:hover  { border-color: var(--brand); background: var(--brand-light); }
+.choiceBtnSecondary:active { transform: scale(0.98); }
+
+.choiceBtnIcon {
+  font-size: 18px; flex-shrink: 0; line-height: 1;
+}
+
+.choiceBtnText {
+  display: flex; flex-direction: column; gap: 2px;
+  font-weight: 600;
+}
+
+.choiceBtnSub {
+  font-size: 11px; font-weight: 400; opacity: 0.75;
+}
+
+.choiceDivider {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; margin: 14px 0;
+  color: var(--muted); font-size: 12px;
+}
+.choiceDivider::before,
+.choiceDivider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ── Edit mode banner ─────────────────────────────────── */
+.editBanner {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #fffbea; border: 1px solid #f6d860;
+  border-radius: var(--r); padding: 10px 14px;
+  font-size: 13px; color: #7a5f00;
+  margin-bottom: 12px; gap: 12px;
+  animation: bannerIn 220ms var(--ease-out) both;
+}
+
+@keyframes bannerIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.editBannerCancel {
+  background: none; border: 1.5px solid #f6d860;
+  border-radius: 20px; padding: 4px 12px;
+  font-size: 12px; font-weight: 600; color: #7a5f00;
+  cursor: pointer; white-space: nowrap;
+  font-family: inherit;
+  transition: background var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+.editBannerCancel:hover  { background: rgba(246,216,96,0.3); border-color: #d4a800; }
+.editBannerCancel:active { transform: scale(0.97); }
+
+/* ── Disabled shift tab (in edit mode) ────────────────── */
+.shiftTabDisabled {
+  opacity: 0.45; cursor: not-allowed; pointer-events: none;
+}
+
+/* ── Rate shop reminder banner ── */
+.rateShopReminderBanner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fffbea;
+  border: 1.5px solid #f6d860;
+  border-radius: var(--r);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #7a5f00;
+  margin-bottom: 12px;
+  animation: bannerIn 220ms var(--ease-out) both;
+}
+
+.rateShopReminderIcon { font-size: 16px; flex-shrink: 0; }
+
+.rateShopReminderText { flex: 1; line-height: 1.4; }
+
+/* ═══════════════════════════════════════════════════════
+   DASHBOARD LAYOUT
+   ═══════════════════════════════════════════════════════ */
+
+/* Full-width page wrapper (replaces .main for checklist) */
+.dashWrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 14px;
+}
+
+/* Full-width alerts/context strip above the grid */
+.topStrip {
+  margin-bottom: 4px;
+}
+
+/* Two-column grid: form on left, tasks on right */
+.dashGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  align-items: start;
+}
+
+@media (min-width: 820px) {
+  .dashGrid {
+    grid-template-columns: 1fr 340px;
+    gap: 0 14px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .dashGrid {
+    grid-template-columns: 1fr 380px;
+  }
+}
+
+/* Left column: form content */
+.dashLeft {
+  min-width: 0;
+}
+
+/* Right column wrapper */
+.dashRight {
+  min-width: 0;
+}
+
+/* Sticky inner wrapper so the task panel stays in view as the form scrolls */
+.dashRightInner {
+  position: sticky;
+  top: 62px; /* topbar height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Task card: no bottom margin, fills the sticky panel */
+.taskCard {
+  margin-bottom: 0 !important;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollable task list region inside the card */
+.taskScrollable {
+  overflow-y: auto;
+  max-height: calc(100vh - 310px);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.taskScrollable::-webkit-scrollbar       { width: 4px; }
+.taskScrollable::-webkit-scrollbar-track { background: transparent; }
+.taskScrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* Actions row inside the right panel */
+.actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.actionBtn {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px !important;
+  padding: 9px 10px !important;
+}
+
+.editClosedNote {
+  flex: 1;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 9px 10px;
+  text-align: center;
+}
+
+/* Full-width post preview section below the grid */
+.outputSection {
+  margin-top: 14px;
+}
+
+/* On mobile the grid is single-column — undo sticky so it doesn't fight scroll */
+@media (max-width: 819px) {
+  .dashRightInner {
+    position: static;
+  }
+  .taskScrollable {
+    max-height: none;
+    overflow-y: visible;
+  }
+  .actions {
+    margin-bottom: 12px;
+  }
+}

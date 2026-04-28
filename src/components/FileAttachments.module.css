@@ -1,0 +1,152 @@
+.wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--brand);
+  flex: 1;
+}
+
+.titleCount {
+  font-weight: 400;
+  color: var(--muted);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 11px;
+}
+
+.addBtn {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--brand);
+  background: var(--brand-light);
+  border: 1px solid var(--brand-mid);
+  border-radius: 20px;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s, transform 0.1s;
+  white-space: nowrap;
+}
+.addBtn:hover  { background: #dde0f4; }
+.addBtn:active { transform: scale(0.97); }
+
+/* ── Drop body ── */
+.body {
+  padding: 0;
+  transition: background 0.15s, outline 0.1s;
+}
+.body.over {
+  background: #f0f4ff;
+  outline: 2px dashed var(--brand-mid);
+  outline-offset: -4px;
+}
+
+/* ── File list ── */
+.list { display: flex; flex-direction: column; }
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+.chip:last-child { border-bottom: none; }
+.chip:hover { background: var(--surface); }
+
+.chipIcon { font-size: 17px; flex-shrink: 0; line-height: 1; }
+
+.chipName {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.chipName a { color: var(--brand); text-decoration: none; }
+.chipName a:hover { text-decoration: underline; }
+
+.chipSize {
+  font-size: 11px;
+  color: var(--muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.chipRemove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 3px 5px;
+  border-radius: 4px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.1s, background 0.1s;
+}
+.chipRemove:hover { color: var(--danger); background: var(--danger-bg); }
+
+/* ── Uploading row ── */
+.uploading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--brand);
+  border-top: 1px solid var(--border);
+}
+
+/* ── Error list ── */
+.errors {
+  padding: 8px 14px;
+  font-size: 12px;
+  color: var(--danger);
+  border-top: 1px solid var(--danger-bg);
+  background: var(--danger-bg);
+}
+.errorRow { margin-bottom: 2px; }
+.errorDismiss {
+  font-size: 11px;
+  margin-top: 6px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  text-decoration: underline;
+}
+
+/* ── Empty state ── */
+.empty {
+  padding: 18px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+}

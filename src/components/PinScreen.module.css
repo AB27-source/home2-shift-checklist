@@ -1,0 +1,77 @@
+.wrap {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+
+.box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--rlg);
+  padding: 28px 24px;
+  width: 100%; max-width: 300px;
+  text-align: center;
+}
+
+.greeting { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+.sub      { font-size: 12px; color: var(--muted); margin-bottom: 22px; }
+
+.dots {
+  display: flex; justify-content: center; gap: 12px;
+  margin-bottom: 22px;
+}
+.shake { animation: shake 0.4s ease; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%,60%  { transform: translateX(-6px); }
+  40%,80%  { transform: translateX(6px); }
+}
+
+.dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  transition: background var(--dur-fast) var(--spring),
+              border-color var(--dur-fast) var(--spring);
+}
+.dot.filled { background: var(--brand); border-color: var(--brand); }
+.dot.error  { background: var(--danger); border-color: var(--danger); }
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.key {
+  aspect-ratio: 1;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 20px; font-weight: 500;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: inherit;
+  color: var(--text);
+  transition: background  var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              transform   var(--dur-fast) var(--spring);
+  will-change: transform;
+}
+.key:hover:not(:disabled) { background: var(--brand-light); border-color: var(--brand); }
+.key:active { transform: scale(0.93); }
+.key.empty  { border: none; background: transparent; cursor: default; }
+.key.delete { font-size: 16px; color: var(--muted); }
+
+.error {
+  font-size: 12px; color: var(--danger);
+  margin-top: 12px; min-height: 18px;
+}
+
+.back {
+  font-size: 12px; color: var(--brand);
+  margin-top: 12px; cursor: pointer;
+  text-decoration: underline;
+  background: none; border: none;
+  font-family: inherit;
+}

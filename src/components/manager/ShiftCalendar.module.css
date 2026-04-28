@@ -1,0 +1,143 @@
+.wrap {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--rlg); padding: 16px; margin-bottom: 16px;
+}
+
+.header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+.title  { font-size: 13px; font-weight: 600; color: var(--text); }
+
+.legend { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.lgLbl  { font-size: 11px; color: var(--muted); }
+.lgHint { font-size: 11px; color: var(--muted); margin-left: 6px; }
+.lgCell { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+
+/* ── CELL COLORS — explicit, no fallback issues ── */
+.cEmpty   { background: #ebedf0 !important; }
+.cFull    { background: #2da44e !important; }
+.cPartial { background: #e6b32a !important; }
+.cLow     { background: #cf222e !important; }
+
+.calWrap  { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; }
+
+.dayLabels { display: flex; flex-direction: column; gap: 3px; margin-top: 20px; flex-shrink: 0; }
+.dayLbl    { font-size: 9px; color: var(--muted); width: 26px; text-align: right; height: 14px; line-height: 14px; }
+
+.gridArea  { flex: 1; min-width: 0; position: relative; }
+
+.monthRow  { display: flex; position: relative; height: 18px; margin-bottom: 2px; }
+.monthLbl  { position: absolute; font-size: 10px; color: var(--muted); white-space: nowrap; }
+
+.cells { display: flex; gap: 3px; }
+.week  { display: flex; flex-direction: column; gap: 3px; }
+
+.cell {
+  width: 14px; height: 14px; border-radius: 2px;
+  cursor: pointer; flex-shrink: 0;
+  transition: opacity 0.1s, transform 0.1s;
+}
+.cell:hover { opacity: 0.7; transform: scale(1.2); }
+
+/* ── Tooltip ── */
+.tooltip {
+  position: fixed; background: #1a1a2e; color: #fff;
+  padding: 7px 11px; border-radius: 6px; font-size: 12px;
+  line-height: 1.5; pointer-events: none; z-index: 600; white-space: nowrap;
+}
+
+/* ── Overlay ── */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 300; display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+
+/* ── Day modal ── */
+.modal {
+  background: var(--white); border-radius: var(--rlg);
+  padding: 24px; width: 100%; max-width: 480px;
+  max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.detailModal { max-width: 600px; }
+
+.modalHeader {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 14px; gap: 12px;
+}
+.modalTitle { font-size: 16px; font-weight: 700; color: var(--text); }
+.modalSub   { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+.closeBtn {
+  background: none; border: none; cursor: pointer;
+  font-size: 16px; color: var(--muted); padding: 2px 6px;
+  border-radius: 4px; flex-shrink: 0;
+}
+.closeBtn:hover { background: var(--surface); color: var(--text); }
+
+.backBtn {
+  font-size: 12px; color: var(--brand); background: var(--brand-light);
+  border: 1px solid var(--brand-mid); border-radius: 20px;
+  padding: 4px 12px; cursor: pointer; font-family: inherit;
+}
+
+.missingBanner {
+  background: var(--warn-bg); border: 1px solid #f6d860;
+  border-radius: var(--r); padding: 10px 12px;
+  font-size: 12px; color: #92400e; margin-bottom: 12px;
+}
+
+.emptyState { font-size: 13px; color: var(--muted); font-style: italic; padding: 12px 0; }
+
+/* ── Shift cards in day modal ── */
+.shiftCards { display: flex; flex-direction: column; gap: 8px; }
+.shiftCard {
+  border: 1px solid var(--border); border-radius: var(--r);
+  padding: 12px 14px; cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.shiftCard:hover { border-color: var(--brand); background: var(--brand-light); }
+
+.shiftCardLeft  { flex: 1; min-width: 0; }
+.shiftCardName  { font-size: 14px; font-weight: 600; color: var(--text); }
+.shiftCardMeta  { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.shiftBadge     { font-size: 11px; background: var(--surface); color: var(--muted); padding: 2px 8px; border-radius: 20px; }
+.shiftTime      { font-size: 11px; color: var(--muted); }
+.shiftAlert     { font-size: 11px; color: var(--warn); }
+
+.shiftCardRight { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.miniBar        { width: 60px; height: 5px; border-radius: 99px; background: var(--border); }
+.miniBarFill    { height: 5px; border-radius: 99px; }
+.shiftCount     { font-size: 11px; color: var(--muted); }
+.reviewLink     { font-size: 12px; color: var(--brand); font-weight: 600; }
+
+/* ── View tabs in shift detail ── */
+.viewTabs { display: flex; gap: 6px; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+.viewTab  {
+  padding: 5px 14px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--white);
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  font-family: inherit; color: var(--muted); transition: all 0.15s;
+}
+.viewTab:hover       { border-color: var(--brand); color: var(--brand); }
+.viewTabActive       { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+.detailBody { max-height: 50vh; overflow-y: auto; }
+
+/* ── Task list in shift detail ── */
+.taskList { display: flex; flex-direction: column; gap: 2px; }
+.taskRow  { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--surface); font-size: 13px; }
+.taskRow:last-child { border-bottom: none; }
+.taskDone { color: var(--success); font-weight: 700; flex-shrink: 0; width: 14px; }
+.taskSkip { color: var(--warn); font-weight: 700; flex-shrink: 0; width: 14px; }
+.taskInfo { flex: 1; }
+.taskName { font-weight: 500; color: var(--text); }
+.taskTimeLbl { font-size: 11px; color: var(--muted); }
+.taskTs   { font-size: 11px; font-weight: 600; color: var(--success); background: var(--success-bg); padding: 1px 7px; border-radius: 20px; margin-left: 6px; }
+.taskNote { font-size: 11px; color: var(--muted); font-style: italic; margin-top: 2px; }
+
+.logPost {
+  background: var(--surface); border-radius: var(--r); padding: 14px;
+  font-size: 13px; line-height: 1.75; color: var(--text);
+  white-space: pre-wrap; border-left: 3px solid var(--brand);
+  font-family: 'Segoe UI', sans-serif;
+}

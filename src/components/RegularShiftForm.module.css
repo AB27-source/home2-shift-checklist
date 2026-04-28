@@ -1,0 +1,71 @@
+.wrap { /* full-width within the card */ }
+
+/* ── Shared section styles (mirrors NightAuditForm) ── */
+.section { margin-bottom: 16px; }
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--brand);
+  margin-bottom: 10px;
+}
+
+/* ── Hotel Statistics grid ── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 12px;
+}
+
+@media (min-width: 560px) {
+  .statsGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Occupancy + ADR span full width on the first row only when > 3 cols */
+@media (min-width: 560px) {
+  .occField { grid-column: span 2; }
+}
+
+/* ── Activity grid ── */
+.actGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 12px;
+}
+
+@media (min-width: 560px) {
+  .actGrid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ── Textarea ── */
+.textarea {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  resize: vertical;
+  min-height: 88px;
+  line-height: 1.5;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--brand);
+  background: var(--white);
+}
+
+/* Guest-request detail — full-width expand */
+.guestDetail {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+}

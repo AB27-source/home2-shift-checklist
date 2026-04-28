@@ -1,0 +1,187 @@
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--rlg);
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 16px 11px;
+  background: var(--brand-light);
+  border-bottom: 1px solid var(--border);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  background: var(--brand);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.livePill {
+  font-size: 10px;
+  font-weight: 700;
+  color: #059669;
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+  padding: 1px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+.inProgressLabel {
+  color: #059669;
+  font-weight: 600;
+}
+
+.subtitle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.shiftBadge {
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.meta { color: var(--muted); font-size: 11px; }
+
+.histCount {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.histCount {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── Snapshot table ── */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.thHotel, .thPeriod {
+  padding: 8px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  white-space: nowrap;
+}
+.thHotel { text-align: left; min-width: 160px; }
+.thPeriod { text-align: center; min-width: 110px; }
+
+.row:not(:last-child) td { border-bottom: 1px solid var(--border); }
+
+.tdHotel {
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tdRate {
+  padding: 8px 12px;
+  text-align: center;
+  vertical-align: top;
+}
+
+.cellRate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.cellSoldOut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #c53030;
+}
+
+.cellEmpty { color: var(--border); font-size: 13px; }
+
+.cellNote {
+  font-size: 10px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.cellFrom {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.cellFromLive {
+  color: #059669;
+  font-weight: 600;
+}
+

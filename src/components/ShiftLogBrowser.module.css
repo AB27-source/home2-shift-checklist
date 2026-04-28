@@ -1,0 +1,353 @@
+/* ── Embedded mode (no topbar, no .main wrapper padding) ── */
+.embeddedWrap {
+  /* sits inside Dashboard's .wrap which already has max-width + padding */
+}
+
+/* ── Topbar back button ── */
+.backBtn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px;
+  padding: 4px 12px;
+  color: #fff; font-size: 13px; font-weight: 500;
+  cursor: pointer; font-family: inherit;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.backBtn:hover { background: rgba(255,255,255,0.28); }
+
+/* ── Month navigation ── */
+.monthNav {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.monthLabel {
+  font-size: 15px; font-weight: 700; color: var(--text);
+}
+
+.monthBtn {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text);
+  transition: background  var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color        var(--dur-fast) var(--ease-out);
+}
+.monthBtn:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+.monthBtnDisabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+/* ── Calendar grid ── */
+.dayHeaders {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+.dayHeader {
+  text-align: center;
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--muted); padding: 4px 0;
+}
+
+.calGrid {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  position: relative;
+}
+
+.calLoading {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.7);
+  border-radius: 8px;
+}
+
+.cell,
+.cellEmpty {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; padding: 4px 2px;
+  position: relative;
+}
+
+.cellEmpty { }
+
+.cellClickable {
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.cellClickable:hover { background: var(--brand-light); }
+
+.cellFuture  { opacity: 0.25; cursor: default; }
+
+.cellToday {
+  outline: 2px solid var(--brand);
+  outline-offset: -2px;
+}
+
+.cellSelected {
+  background: var(--brand-light);
+}
+
+.cellNum {
+  font-size: 12px; font-weight: 500; color: var(--text); line-height: 1;
+}
+
+.cellPips {
+  display: flex; gap: 2px; flex-wrap: wrap; justify-content: center;
+}
+
+.pip {
+  width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
+}
+
+/* ── Legend ── */
+.legend {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.legendItem {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--muted);
+}
+
+.legendDot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+
+/* ── Selected day ── */
+.dayTitle {
+  font-size: 14px; font-weight: 700; color: var(--text);
+  margin-bottom: 12px;
+}
+
+.emptyState {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--muted); font-size: 13px; padding: 12px 0;
+}
+
+.logList {
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.logCard {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r);
+  cursor: pointer; font-family: inherit; text-align: left; width: 100%;
+  will-change: transform;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              background   var(--dur-fast) var(--ease-out),
+              transform    var(--dur-fast) var(--ease-out);
+}
+.logCard:hover  { border-color: var(--brand); background: var(--brand-light); }
+.logCard:active { transform: scale(0.99); }
+
+.logBadge {
+  width: 38px; height: 38px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+
+.logInfo {
+  flex: 1;
+  display: flex; flex-direction: column; gap: 2px;
+}
+
+.logShift { font-size: 13px; font-weight: 600; color: var(--text); }
+.logAgent { font-size: 12px; color: var(--muted); }
+
+.logArrow { flex-shrink: 0; color: var(--muted); opacity: 0.6; }
+
+.logPct {
+  display: flex; flex-direction: column; align-items: flex-end;
+  flex-shrink: 0; min-width: 40px;
+}
+.logPctNum { font-size: 14px; font-weight: 700; line-height: 1; }
+.logPctSub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* ── Record detail view ── */
+.detailBackBtn {
+  display: inline-block;
+  background: none; border: none;
+  color: var(--brand); font-size: 13px; font-weight: 500;
+  cursor: pointer; font-family: inherit; padding: 0;
+  margin-bottom: 16px;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.detailBackBtn:hover { opacity: 0.7; text-decoration: underline; }
+
+.detailTitle {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 16px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.detailBadge {
+  width: 48px; height: 48px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 13px; font-weight: 700; flex-shrink: 0;
+}
+
+.detailShiftName   { font-size: 16px; font-weight: 700; color: var(--text); }
+.detailMeta        { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.detailCompletion  { font-weight: 600; }
+
+/* ── Completion ring ── */
+.pctRing {
+  position: relative; flex-shrink: 0;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+}
+.pctRingNum {
+  position: absolute;
+  font-size: 10px; font-weight: 700; line-height: 1;
+}
+
+/* ── View tabs (Checklist / Shift Log Post) ── */
+.viewTabs {
+  display: flex; gap: 6px;
+  margin-bottom: 14px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.viewTab {
+  padding: 6px 16px; border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--white); color: var(--muted);
+  font-size: 12px; font-weight: 500;
+  cursor: pointer; font-family: inherit;
+  transition: background  var(--dur-fast) var(--ease-out),
+              color       var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+.viewTab:hover:not(.viewTabActive) { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+.viewTabActive       { background: var(--brand); color: #fff; border-color: var(--brand); }
+.viewTabActive:hover { background: var(--brand); color: #fff; opacity: 0.85; }
+
+/* ── Checklist task rows ── */
+.taskList {
+  display: flex; flex-direction: column;
+  max-height: 480px; overflow-y: auto;
+}
+
+.taskRow {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 0; border-bottom: 1px solid var(--surface);
+  font-size: 13px;
+}
+.taskRow:last-child { border-bottom: none; }
+
+.taskDone { color: #2da44e; font-weight: 700; flex-shrink: 0; width: 16px; margin-top: 1px; }
+.taskSkip { color: var(--danger); font-weight: 700; flex-shrink: 0; width: 16px; margin-top: 1px; }
+
+.taskInfo { flex: 1; }
+.taskName { font-weight: 500; color: var(--text); }
+.taskTime { font-size: 11px; color: var(--muted); }
+.taskTs   {
+  font-size: 11px; font-weight: 600;
+  color: var(--success); background: var(--success-bg);
+  padding: 1px 7px; border-radius: 20px; margin-left: 6px;
+}
+.taskNote {
+  font-size: 11px; color: var(--muted);
+  font-style: italic; margin-top: 3px;
+}
+
+.logPost {
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 14px;
+  font-size: 13px; line-height: 1.8; color: var(--text);
+  white-space: pre-wrap;
+  border-left: 3px solid var(--brand);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.attachList {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 14px;
+}
+
+.attachLabel {
+  width: 100%;
+  font-size: 12px; font-weight: 700;
+  color: var(--muted);
+}
+
+.attachChip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--brand);
+  font-size: 12px; font-weight: 600;
+  text-decoration: none;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
+}
+
+.attachChip:hover {
+  border-color: var(--brand);
+  background: var(--brand-light);
+}
+
+/* ── Edit history (iMessage-style) ── */
+.editedWrap {
+  margin: 4px 0 12px;
+}
+
+.editedBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+.editedBtn:hover { background: var(--border); color: var(--text); }
+
+.editedChevron {
+  transition: transform 0.2s;
+}
+.editedChevronOpen { transform: rotate(180deg); }
+
+.historyList {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.historyEntry {
+  border-left: 3px solid var(--border);
+  padding-left: 10px;
+}
+
+.historyMeta {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.historyReplaced {
+  font-weight: 400;
+}
+
+.historyPost {
+  opacity: 0.7;
+  font-size: 13px;
+  pointer-events: none;
+}
