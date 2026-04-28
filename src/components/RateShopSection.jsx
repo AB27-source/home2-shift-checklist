@@ -24,7 +24,8 @@ function fmtTime(iso) {
  *   onVarianceAlert(alerts) – called when a rate exceeds the variance threshold
  *                             alerts: [{ hotel, period, startRate, newRate }]
  */
-export default function RateShopSection({ shiftKey, rateShops, onChange, onVarianceAlert }) {
+export default function RateShopSection({ shiftKey, rateShops, onChange, onVarianceAlert, varianceThreshold }) {
+  const threshold = varianceThreshold ?? VARIANCE_THRESHOLD
   const [status, setStatus] = useState(() => getWindowStatus(shiftKey))
 
   // Refresh window status every minute
@@ -75,7 +76,7 @@ export default function RateShopSection({ shiftKey, rateShops, onChange, onVaria
     const newRate = parseFloat(value)
     if (isNaN(startRate) || isNaN(newRate)) return
 
-    if (Math.abs(newRate - startRate) >= VARIANCE_THRESHOLD) {
+    if (Math.abs(newRate - startRate) >= threshold) {
       alertedRef.current.add(key)
       const hotel = HOTELS.find(h => h.id === hotelId)
       onVarianceAlert([{ hotel: hotel?.name ?? hotelId, period, startRate, newRate }])
@@ -141,7 +142,7 @@ export default function RateShopSection({ shiftKey, rateShops, onChange, onVaria
                   if (period === 'start' || !hasValue) return false
                   const s = parseFloat(rateShops.start?.[hotel.id]?.rate)
                   const v = parseFloat(entry?.rate)
-                  return !isNaN(s) && !isNaN(v) && Math.abs(v - s) >= VARIANCE_THRESHOLD
+                  return !isNaN(s) && !isNaN(v) && Math.abs(v - s) >= threshold
                 })()
 
                 const isSoldOut = !!entry?.soldOut
@@ -239,7 +240,7 @@ export default function RateShopSection({ shiftKey, rateShops, onChange, onVaria
       </div>
 
       <p className={styles.footer}>
-        Variance threshold: <strong>${VARIANCE_THRESHOLD}</strong> — manager is notified when any rate changes by more than this amount
+        Variance threshold: <strong>${threshold}</strong> — manager is notified when any rate changes by more than this amount
       </p>
     </div>
   )

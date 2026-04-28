@@ -73,3 +73,22 @@
 }
 .handoffClear:hover    { background: rgba(246,216,96,0.3); }
 .handoffClear:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Variance threshold bar ── */
+.thresholdBar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--rlg); padding: 12px 16px;
+  font-size: 13px;
+}
+.thresholdLabel { color: var(--muted); white-space: nowrap; }
+.thresholdValue { color: var(--text); }
+.thresholdHint  { font-size: 11px; color: var(--muted); flex: 1; min-width: 160px; }
+.thresholdInputWrap { display: flex; align-items: center; gap: 2px; }
+.thresholdDollar    { font-size: 13px; color: var(--muted); }
+.thresholdInput {
+  width: 64px; padding: 4px 6px; font-size: 13px; font-family: inherit;
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  color: var(--text); background: var(--surface);
+}
+.thresholdInput:focus { outline: none; border-color: var(--brand); }

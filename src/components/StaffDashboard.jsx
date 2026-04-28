@@ -5,11 +5,9 @@ import {
   updateShiftRecord,
   getAgentTodayRecords,
   getTodayAllRecords,
-  postToTeams,
   setHandoff,
   getPreviousShiftLogs,
   upsertLiveRateShop,
-  MANAGER_WEBHOOK,
 } from "../lib/supabase";
 import {
   filterManagerNotes,
@@ -536,21 +534,32 @@ export default function StaffDashboard({
 
   // ── Variance alert ────────────────────────────────────────────────────────
   async function handleVarianceAlert(alerts) {
-    alerts.forEach((alert) => {
-      const key = `${alert.hotel}|${alert.period}`;
-      if (sentVarianceRef.current.has(key)) return;
-      sentVarianceRef.current.add(key);
-      const diff = alert.newRate - alert.startRate;
-      const sign = diff > 0 ? "+" : "";
-      const msg = [
-        `🚨 Rate Shop Variance Alert`,
-        `Hotel: ${alert.hotel}`,
-        `Shift: ${SHIFTS[shift].label}  |  Agent: ${agent.name}`,
-        `${PERIOD_LABELS[alert.period]} rate: $${Number(alert.newRate).toFixed(2)}  vs  Start: $${Number(alert.startRate).toFixed(2)}  (Δ${sign}$${Math.abs(diff).toFixed(2)})`,
-      ].join("\n");
-      if (MANAGER_WEBHOOK) postToTeams(msg, MANAGER_WEBHOOK).catch(() => {});
-    });
-    showToast("⚠️ Rate variance detected — manager notified");
+    const newAlerts = alerts.filter(a => {
+      const key = `${a.hotel}|${a.period}`
+      if (sentVarianceRef.current.has(key)) return false
+      sentVarianceRef.current.add(key)
+      return true
+    })
+    if (!newAlerts.length) return
+
+    showToast("⚠️ Rate variance detected — manager notified")
+
+    const lines = newAlerts.map(a => {
+      const diff = a.newRate - a.startRate
+      const sign = diff > 0 ? "+" : ""
+      return `| ${a.hotel} | ${PERIOD_LABELS[a.period]} | $${Number(a.startRate).toFixed(2)} | $${Number(a.newRate).toFixed(2)} | **${sign}$${Math.abs(diff).toFixed(2)}** |`
+    })
+
+    const msg = [
+      `## 🚨 Rate Shop Variance Alert`,
+      `**Shift:** ${SHIFTS[shift].label} · **Agent:** ${agent.name}`,
+      ``,
+      `| Competitor | Period | Start Rate | Current Rate | Change |`,
+      `|---|---|---|---|---|`,
+      ...lines,
+    ].join("\n")
+
+    postShiftLogToTeams(msg, 'manager').catch(() => {})
   }
 
   // ── Derived values ────────────────────────────────────────────────────────
@@ -1393,6 +1402,7 @@ export default function StaffDashboard({
                   rateShops={rateShops}
                   onChange={handleRateShopsChange}
                   onVarianceAlert={handleVarianceAlert}
+                  varianceThreshold={handoff?.variance_threshold ?? undefined}
                 />
               </div>
             </div>

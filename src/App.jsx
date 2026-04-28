@@ -189,6 +189,7 @@ export default function App() {
         )}
         {screen === 'manager' && currentAgent && (
           <Dashboard
+            agent={currentAgent}
             agents={agents}
             sessionToken={sessionToken}
             onSignOut={handleSignOut}

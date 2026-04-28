@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getShiftRecords, setHandoff } from '../../lib/supabase'
+import { VARIANCE_THRESHOLD } from '../../data/rateShop'
 import ShiftHistory      from './ShiftHistory'
 import ShiftCalendar     from './ShiftCalendar'
 import AgentManager      from './AgentManager'
@@ -9,11 +10,32 @@ import RateShopSnapshot  from './RateShopSnapshot'
 import RateShopHistory   from './RateShopHistory'
 import styles from './Dashboard.module.css'
 
-export default function Dashboard({ agents, sessionToken, onSignOut, showToast, onAgentsChange, handoff, onHandoffUpdate }) {
+export default function Dashboard({ agent, agents, sessionToken, onSignOut, showToast, onAgentsChange, handoff, onHandoffUpdate }) {
   const [tab, setTab]           = useState('history')
   const [records, setRecords]   = useState([])
   const [loading, setLoading]   = useState(true)
   const [clearingHandoff, setClearingHandoff] = useState(false)
+  const [thresholdEdit, setThresholdEdit] = useState(null)
+  const [savingThreshold, setSavingThreshold] = useState(false)
+
+  const isGM = agent?.is_super_admin || agent?.role === 'General Manager'
+  const currentThreshold = handoff?.variance_threshold ?? VARIANCE_THRESHOLD
+
+  async function handleSaveThreshold() {
+    const val = parseInt(thresholdEdit, 10)
+    if (isNaN(val) || val < 1) return
+    setSavingThreshold(true)
+    try {
+      await setHandoff({ variance_threshold: val })
+      onHandoffUpdate?.({ ...handoff, variance_threshold: val })
+      showToast(`Variance threshold updated to $${val}`)
+      setThresholdEdit(null)
+    } catch {
+      showToast('Failed to save threshold')
+    } finally {
+      setSavingThreshold(false)
+    }
+  }
 
   async function handleClearHandoff() {
     if (!confirm('Clear the current handoff note? Agents will no longer see it.')) return
@@ -132,7 +154,44 @@ export default function Dashboard({ agents, sessionToken, onSignOut, showToast, 
               />
             </>
           )}
-          {tab === 'rateshop' && <RateShopHistory records={records} />}
+          {tab === 'rateshop' && (
+            <>
+              {isGM && (
+                <div className={styles.thresholdBar}>
+                  <span className={styles.thresholdLabel}>
+                    Variance alert threshold:
+                  </span>
+                  {thresholdEdit === null ? (
+                    <>
+                      <strong className={styles.thresholdValue}>${currentThreshold}</strong>
+                      <button className="btn-sm" onClick={() => setThresholdEdit(String(currentThreshold))}>Edit</button>
+                    </>
+                  ) : (
+                    <>
+                      <span className={styles.thresholdInputWrap}>
+                        <span className={styles.thresholdDollar}>$</span>
+                        <input
+                          type="number"
+                          min="1"
+                          max="999"
+                          value={thresholdEdit}
+                          onChange={e => setThresholdEdit(e.target.value)}
+                          className={styles.thresholdInput}
+                          autoFocus
+                        />
+                      </span>
+                      <button className="btn-sm" onClick={handleSaveThreshold} disabled={savingThreshold}>
+                        {savingThreshold ? 'Saving…' : 'Save'}
+                      </button>
+                      <button className="btn-sm" onClick={() => setThresholdEdit(null)}>Cancel</button>
+                    </>
+                  )}
+                  <span className={styles.thresholdHint}>Staff is alerted when a competitor rate changes by more than this amount between periods</span>
+                </div>
+              )}
+              <RateShopHistory records={records} />
+            </>
+          )}
           {tab === 'calendar' && <ShiftLogBrowser embedded isAdmin={true} />}
           {tab === 'agents' && (
             <AgentManager
