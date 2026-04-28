@@ -145,12 +145,12 @@ export default function AgentManager({ agents, sessionToken, onAgentsChange, sho
         </div>
       </div>
 
-      <div className={styles.sharedPinNotice}>
+      {/* <div className={styles.sharedPinNotice}>
         <div className={styles.sharedPinTitle}>🔐 Admin Sign-In</div>
         <div className={styles.sharedPinText}>
           Manager access now uses each admin's own profile and PIN. Keep at least one active admin account available so the dashboard remains accessible.
         </div>
-      </div>
+      </div> */}
 
       {/* Modals */}
       {modal?.type === 'add' && (
@@ -232,7 +232,7 @@ function AgentFormModal({ title, sub, defaultName = '', defaultRole = '', defaul
 
         <div className="field">
           <label>Full name</label>
-          <input type="text" placeholder="e.g. Alex Rivera" value={name} onChange={e => setName(e.target.value)} />
+          <input type="text" placeholder="e.g. Miguel Vernaza" value={name} onChange={e => setName(e.target.value)} />
         </div>
 
         <div className="field">

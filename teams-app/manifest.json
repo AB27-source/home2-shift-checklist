@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.16",
+  "version": "2.0.0",
+  "id": "b7dab899-caed-4250-98c8-8cdccacf659b",
+  "developer": {
+    "name": "Home2 Suites Las Vegas North",
+    "websiteUrl": "https://home2-shift-checklist.vercel.app",
+    "privacyUrl": "https://home2-shift-checklist.vercel.app",
+    "termsOfUseUrl": "https://home2-shift-checklist.vercel.app"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Shift Checklist",
+    "full": "Home2 Suites Front Desk Shift Checklist"
+  },
+  "description": {
+    "short": "Front desk shift management",
+    "full": "Shift checklist and log management for Home2 Suites Las Vegas North front desk agents."
+  },
+  "accentColor": "#1e3a5f",
+  "staticTabs": [
+    {
+      "entityId": "shiftChecklist",
+      "name": "Shift Checklist",
+      "contentUrl": "https://home2-shift-checklist.vercel.app",
+      "websiteUrl": "https://home2-shift-checklist.vercel.app",
+      "scopes": ["personal"]
+    }
+  ],
+  "validDomains": [
+    "home2-shift-checklist.vercel.app"
+  ]
+}
