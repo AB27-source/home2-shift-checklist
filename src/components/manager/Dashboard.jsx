@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { getShiftRecords, setHandoff } from '../../lib/supabase'
-import { VARIANCE_THRESHOLD } from '../../data/rateShop'
+import { getShiftRecords, setHandoff, getTodayVarianceAlerts, subscribeVarianceAlerts } from '../../lib/supabase'
+import { VARIANCE_THRESHOLD, PERIOD_LABELS } from '../../data/rateShop'
 import ShiftHistory      from './ShiftHistory'
 import ShiftCalendar     from './ShiftCalendar'
 import AgentManager      from './AgentManager'
@@ -17,6 +17,15 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
   const [clearingHandoff, setClearingHandoff] = useState(false)
   const [thresholdEdit, setThresholdEdit] = useState(null)
   const [savingThreshold, setSavingThreshold] = useState(false)
+  const [varianceAlerts, setVarianceAlerts] = useState([])
+
+  useEffect(() => {
+    getTodayVarianceAlerts().then(setVarianceAlerts).catch(() => {})
+    const channel = subscribeVarianceAlerts(payload => {
+      if (payload.new) setVarianceAlerts(prev => [payload.new, ...prev])
+    })
+    return () => { channel.unsubscribe() }
+  }, [])
 
   const isGM = agent?.is_super_admin || agent?.role === 'General Manager'
   const currentThreshold = handoff?.variance_threshold ?? VARIANCE_THRESHOLD
@@ -88,7 +97,9 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
           <h2 className={styles.title}>Dashboard</h2>
           <div className={styles.tabs}>
             <button className={`${styles.tab} ${tab === 'history'   ? styles.active : ''}`} onClick={() => setTab('history')}>Shift History</button>
-            <button className={`${styles.tab} ${tab === 'rateshop' ? styles.active : ''}`} onClick={() => setTab('rateshop')}>Rate Shop</button>
+            <button className={`${styles.tab} ${tab === 'rateshop' ? styles.active : ''}`} onClick={() => setTab('rateshop')}>
+              Rate Shop{varianceAlerts.length > 0 && <span className={styles.tabBadge}>{varianceAlerts.length}</span>}
+            </button>
             <button className={`${styles.tab} ${tab === 'calendar' ? styles.active : ''}`} onClick={() => setTab('calendar')}>Calendar</button>
             <button className={`${styles.tab} ${tab === 'agents'   ? styles.active : ''}`} onClick={() => setTab('agents')}>Agent Profiles</button>
           </div>
@@ -156,6 +167,34 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
           )}
           {tab === 'rateshop' && (
             <>
+              {varianceAlerts.length > 0 && (
+                <div className={styles.alertsPanel}>
+                  <div className={styles.alertsPanelHeader}>
+                    <span className={styles.alertsPanelTitle}>🚨 Today's Variance Alerts</span>
+                    <span className={styles.alertsPanelCount}>{varianceAlerts.length} alert{varianceAlerts.length !== 1 ? 's' : ''}</span>
+                  </div>
+                  <div className={styles.alertsList}>
+                    {varianceAlerts.map(a => {
+                      const diff = Number(a.new_rate) - Number(a.start_rate)
+                      const sign = diff > 0 ? '+' : ''
+                      const time = new Date(a.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      return (
+                        <div key={a.id} className={styles.alertRow}>
+                          <span className={styles.alertHotel}>{a.hotel}</span>
+                          <span className={styles.alertPeriod}>{PERIOD_LABELS[a.period]}</span>
+                          <span className={styles.alertRates}>
+                            ${Number(a.start_rate).toFixed(2)} → ${Number(a.new_rate).toFixed(2)}
+                          </span>
+                          <span className={`${styles.alertDiff} ${diff > 0 ? styles.alertDiffUp : styles.alertDiffDown}`}>
+                            {sign}${Math.abs(diff).toFixed(2)}
+                          </span>
+                          <span className={styles.alertMeta}>{a.agent_name} · {a.shift} · {time}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
               {isGM && (
                 <div className={styles.thresholdBar}>
                   <span className={styles.thresholdLabel}>

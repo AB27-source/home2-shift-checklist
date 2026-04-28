@@ -74,6 +74,41 @@
 .handoffClear:hover    { background: rgba(246,216,96,0.3); }
 .handoffClear:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* ── Tab alert badge ── */
+.tabBadge {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #ef4444; color: #fff;
+  font-size: 10px; font-weight: 700;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  border-radius: 10px; margin-left: 6px; line-height: 1;
+}
+
+/* ── Variance alerts panel ── */
+.alertsPanel {
+  background: #fff8f8; border: 1.5px solid #fca5a5;
+  border-radius: var(--rlg); padding: 14px 16px;
+}
+.alertsPanelHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.alertsPanelTitle { font-size: 13px; font-weight: 700; color: #b91c1c; }
+.alertsPanelCount { font-size: 11px; color: #ef4444; font-weight: 600; }
+.alertsList { display: flex; flex-direction: column; gap: 6px; }
+.alertRow {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: #fff; border: 1px solid #fecaca;
+  border-radius: var(--r); padding: 8px 12px;
+  font-size: 12px;
+}
+.alertHotel  { font-weight: 600; color: var(--text); flex-shrink: 0; }
+.alertPeriod { color: var(--muted); flex-shrink: 0; }
+.alertRates  { color: var(--text); flex-shrink: 0; }
+.alertDiff   { font-weight: 700; flex-shrink: 0; }
+.alertDiffUp   { color: #b91c1c; }
+.alertDiffDown { color: #15803d; }
+.alertMeta   { font-size: 11px; color: var(--muted); margin-left: auto; }
+
 /* ── Variance threshold bar ── */
 .thresholdBar {
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;

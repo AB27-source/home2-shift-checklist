@@ -143,6 +143,32 @@ export async function deactivateAgent(sessionToken, id) {
   }
 }
 
+// ── Rate Variance Alerts ─────────────────────
+export async function saveVarianceAlert({ agentId, agentName, shift, date, hotel, period, startRate, newRate }) {
+  const { error } = await supabase
+    .from('rate_variance_alerts')
+    .insert({ agent_id: agentId, agent_name: agentName, shift, date, hotel, period, start_rate: startRate, new_rate: newRate })
+  if (error) throw error
+}
+
+export async function getTodayVarianceAlerts() {
+  const today = new Date().toISOString().split('T')[0]
+  const { data, error } = await supabase
+    .from('rate_variance_alerts')
+    .select('*')
+    .eq('date', today)
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data || []
+}
+
+export function subscribeVarianceAlerts(callback) {
+  return supabase
+    .channel('rate_variance_alerts_changes')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'rate_variance_alerts' }, callback)
+    .subscribe()
+}
+
 // ── Live Rate Shop ───────────────────────────
 export async function upsertLiveRateShop({ agentId, agentName, shift, date, rateShops }) {
   const { error } = await supabase

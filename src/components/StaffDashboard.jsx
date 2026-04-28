@@ -8,6 +8,7 @@ import {
   setHandoff,
   getPreviousShiftLogs,
   upsertLiveRateShop,
+  saveVarianceAlert,
 } from "../lib/supabase";
 import {
   filterManagerNotes,
@@ -548,6 +549,20 @@ export default function StaffDashboard({
       const diff = a.newRate - a.startRate
       const sign = diff > 0 ? "+" : ""
       return `| ${a.hotel} | ${PERIOD_LABELS[a.period]} | $${Number(a.startRate).toFixed(2)} | $${Number(a.newRate).toFixed(2)} | **${sign}$${Math.abs(diff).toFixed(2)}** |`
+    })
+
+    const today = new Date().toISOString().split('T')[0]
+    newAlerts.forEach(a => {
+      saveVarianceAlert({
+        agentId: agent.id,
+        agentName: agent.name,
+        shift: SHIFTS[shift].label,
+        date: today,
+        hotel: a.hotel,
+        period: a.period,
+        startRate: a.startRate,
+        newRate: a.newRate,
+      }).catch(() => {})
     })
 
     const msg = [
