@@ -81,9 +81,10 @@ export default function AgentManager({ agents, sessionToken, onAgentsChange, sho
   }
 
   function AgentCard({ agent }) {
-    const isAdmin = agent.is_admin
+    const isAdmin      = agent.is_admin
+    const isSuperAdmin = agent.is_super_admin
     return (
-      <div className={`${styles.card} ${isAdmin ? styles.adminCard : ''}`}>
+      <div className={`${styles.card} ${isAdmin ? styles.adminCard : ''} ${isSuperAdmin ? styles.superAdminCard : ''}`}>
         <div className={styles.cardTop}>
           <div className={styles.avatar} style={{ background: agent.color }}>
             {initials(agent.name)}
@@ -91,15 +92,24 @@ export default function AgentManager({ agents, sessionToken, onAgentsChange, sho
           <div className={styles.info}>
             <div className={styles.nameRow}>
               <span className={styles.name}>{agent.name}</span>
-              {isAdmin && <span className={styles.adminBadge}>Admin</span>}
+              {isSuperAdmin
+                ? <span className={styles.superAdminBadge}>👑 Super Admin</span>
+                : isAdmin && <span className={styles.adminBadge}>Admin</span>
+              }
             </div>
             <div className={styles.role}>{agent.role}</div>
           </div>
         </div>
         <div className={styles.actions}>
-          <button className="btn-sm" onClick={() => setModal({ type: 'edit', agent })}>Edit</button>
-          <button className="btn-sm" onClick={() => setModal({ type: 'pin', agent })}>Reset PIN</button>
-          <button className="btn-sm danger" onClick={() => handleRemove(agent)}>Remove</button>
+          {isSuperAdmin ? (
+            <span className={styles.protectedNote}>Protected account</span>
+          ) : (
+            <>
+              <button className="btn-sm" onClick={() => setModal({ type: 'edit', agent })}>Edit</button>
+              <button className="btn-sm" onClick={() => setModal({ type: 'pin', agent })}>Reset PIN</button>
+              <button className="btn-sm danger" onClick={() => handleRemove(agent)}>Remove</button>
+            </>
+          )}
         </div>
       </div>
     )

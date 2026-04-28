@@ -1,0 +1,129 @@
+-- Add super-admin flag to agents
+alter table public.agents
+  add column if not exists is_super_admin boolean not null default false;
+
+-- get_agent_directory — include is_super_admin
+create or replace function public.get_agent_directory()
+returns table (
+  id            uuid,
+  name          text,
+  role          text,
+  color         text,
+  is_admin      boolean,
+  is_super_admin boolean
+)
+language sql
+security definer
+set search_path = public
+as $$
+  select
+    a.id, a.name, a.role, a.color,
+    coalesce(a.is_admin, false)       as is_admin,
+    coalesce(a.is_super_admin, false) as is_super_admin
+  from public.agents a
+  where a.active = true
+  order by a.created_at asc, a.name asc;
+$$;
+
+-- verify_agent_pin — include is_super_admin in return
+create or replace function public.verify_agent_pin(
+  p_agent_id    uuid,
+  p_pin_attempt text
+)
+returns table (
+  id            uuid,
+  name          text,
+  role          text,
+  color         text,
+  is_admin      boolean,
+  is_super_admin boolean,
+  session_token uuid
+)
+language plpgsql
+security definer
+set search_path = public, extensions
+as $$
+declare
+  v_agent   public.agents%rowtype;
+  v_token   uuid;
+begin
+  select * into v_agent from public.agents where agents.id = p_agent_id and active = true;
+  if not found then return; end if;
+  if v_agent.pin_hash is null or
+     v_agent.pin_hash <> extensions.crypt(p_pin_attempt, v_agent.pin_hash)
+  then return; end if;
+
+  -- create session
+  v_token := extensions.gen_random_uuid();
+  insert into public.app_sessions (agent_id, session_token, expires_at)
+  values (v_agent.id, v_token, now() + interval '12 hours');
+
+  return query
+    select
+      v_agent.id, v_agent.name, v_agent.role, v_agent.color,
+      coalesce(v_agent.is_admin, false),
+      coalesce(v_agent.is_super_admin, false),
+      v_token;
+end;
+$$;
+
+-- restore_app_session — include is_super_admin in return
+create or replace function public.restore_app_session(
+  p_session_token uuid
+)
+returns table (
+  id            uuid,
+  name          text,
+  role          text,
+  color         text,
+  is_admin      boolean,
+  is_super_admin boolean
+)
+language plpgsql
+security definer
+set search_path = public, extensions
+as $$
+declare
+  v_agent public.agents%rowtype;
+begin
+  select a.* into v_agent
+  from public.app_sessions s
+  join public.agents a on a.id = s.agent_id
+  where s.session_token = p_session_token
+    and s.expires_at > now()
+    and a.active = true;
+  if not found then
+    raise exception 'Invalid or expired session';
+  end if;
+  return query
+    select
+      v_agent.id, v_agent.name, v_agent.role, v_agent.color,
+      coalesce(v_agent.is_admin, false),
+      coalesce(v_agent.is_super_admin, false);
+end;
+$$;
+
+-- admin_deactivate_agent — block deactivating super admins
+create or replace function public.admin_deactivate_agent(
+  p_session_token uuid,
+  p_agent_id      uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, extensions
+as $$
+declare
+  v_admin  public.agents%rowtype;
+  v_target public.agents%rowtype;
+begin
+  v_admin := public.app_require_session(p_session_token, true);
+
+  select * into v_target from public.agents where id = p_agent_id;
+  if found and coalesce(v_target.is_super_admin, false) = true then
+    raise exception 'Super admin accounts cannot be removed.';
+  end if;
+
+  update public.agents set active = false where id = p_agent_id;
+end;
+$$;

@@ -34,6 +34,7 @@ function normalizeAgent(row) {
     role: row.role,
     color: row.color,
     is_admin: row.is_admin === true,
+    is_super_admin: row.is_super_admin === true,
   }
 }
 
