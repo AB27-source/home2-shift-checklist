@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import { getAgents, getHandoff, getShiftTasks, restoreAgentSession, signOutAgentSession, isAppSessionError } from './lib/supabase'
 import { SHIFTS } from './data/shifts'
 import LoginScreen     from './components/LoginScreen'
@@ -211,6 +212,7 @@ export default function App() {
         )}
       </PageTransition>
       {toast && <Toast message={toast} />}
+      <SpeedInsights />
     </>
   )
 }
