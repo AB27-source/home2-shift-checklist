@@ -207,6 +207,7 @@ function computeFormDiff(origMeta, newMeta, origTaskState, newTaskState, tasks) 
     na_occ_s: 'Occ (Start)', na_occ_e: 'Occ (End)', na_occ_n: 'Occ (New Day)',
     na_adr_s: 'ADR (Start)', na_adr_e: 'ADR (End)', na_adr_n: 'ADR (New Day)',
     na_dep_s: 'Departures (Start)', na_arr_s: 'Arrivals (Start)',
+    na_security_name: 'Security Guard Name',
     na_comments: 'General Comments', na_guest_issues: 'Guest Issues',
     na_high_bal: 'High Balances', na_callouts: 'Call Outs',
     na_declined: 'Declined Payments', na_cancel_detail: 'Cancellation Details',
@@ -686,7 +687,7 @@ export default function StaffDashboard({
         ? `| Maintenance Pass | ${meta.na_maint_ct} |`
         : "",
       hasDisplayValue(meta.na_security)
-        ? `| Security Onsite | ${meta.na_security} |`
+        ? `| Security Onsite | ${meta.na_security}${meta.na_security === 'Yes' && meta.na_security_name ? ` — ${meta.na_security_name}` : ''} |`
         : "",
     ].filter(Boolean);
     if (activityRows.length > 0) {

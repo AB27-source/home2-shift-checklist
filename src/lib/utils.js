@@ -121,7 +121,15 @@ export function parseNightAuditFromPostText(text) {
     na_guest_req_detail: getBullets('Guest Request Details'),
     na_maint_ct:    get('Maintenance Pass'),
     na_maint_detail: getBullets('Maintenance Pass'),
-    na_security:    get('Security Onsite'),
+    na_security:    (() => {
+      const raw = get('Security Onsite')
+      return raw ? raw.split(' — ')[0].trim() : ''
+    })(),
+    na_security_name: (() => {
+      const raw = get('Security Onsite')
+      if (!raw || !raw.includes(' — ')) return ''
+      return raw.split(' — ').slice(1).join(' — ').trim()
+    })(),
     na_comments:    get('General Comments'),
     na_guest_issues: get('Guest Issues / Incidents / Concerns', 'Guest Issues/Incidents/Concerns'),
     na_high_bal:    get('High Balances'),
@@ -269,7 +277,7 @@ function buildLegacyNightAuditPreview(text) {
     ['Rate Adj/Refunds', parsed.na_rate_adj],
     ['Guest Requests', parsed.na_guest_req],
     ['Maintenance Pass', parsed.na_maint_ct],
-    ['Security Onsite', parsed.na_security],
+    ['Security Onsite', parsed.na_security ? `${parsed.na_security}${parsed.na_security === 'Yes' && parsed.na_security_name ? ` — ${parsed.na_security_name}` : ''}` : ''],
   ].filter(([, value]) => hasValue(value)))
 
   pushBulletSection(lines, 'Out of Order Room Details', parsed.na_ooo_detail)

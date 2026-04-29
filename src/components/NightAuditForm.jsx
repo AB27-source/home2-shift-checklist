@@ -172,13 +172,26 @@ export default function NightAuditForm({ meta, onMetaChange }) {
         </div>
 
         {/* Security Onsite */}
-        <div className="field" style={{ maxWidth: 200 }}>
-          <label>Security Onsite</label>
-          <select value={f('na_security')} onChange={ch('na_security')}>
-            <option value="">Select…</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-          </select>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <div className="field" style={{ maxWidth: 160, marginBottom: 0 }}>
+            <label>Security Onsite</label>
+            <select value={f('na_security')} onChange={ch('na_security')}>
+              <option value="">Select…</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          {f('na_security') === 'Yes' && (
+            <div className="field" style={{ flex: 1, minWidth: 180, marginBottom: 0 }}>
+              <label>Security Guard Name</label>
+              <input
+                type="text"
+                placeholder="e.g. John Smith"
+                value={f('na_security_name')}
+                onChange={ch('na_security_name')}
+              />
+            </div>
+          )}
         </div>
 
         {/* General Comments */}
