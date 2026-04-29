@@ -143,6 +143,71 @@ export async function deactivateAgent(sessionToken, id) {
   }
 }
 
+// ── Shift Tasks ──────────────────────────────
+export async function getShiftTasks() {
+  const { data, error } = await supabase
+    .from('shift_tasks')
+    .select('id, shift, name, estimated_time, position')
+    .eq('active', true)
+    .order('position', { ascending: true })
+  if (error) return null
+  const grouped = { morning: [], swing: [], night: [] }
+  for (const row of (data || [])) {
+    if (grouped[row.shift]) {
+      grouped[row.shift].push({ id: row.id, name: row.name, time: row.estimated_time })
+    }
+  }
+  return grouped
+}
+
+export async function addShiftTask(shiftKey, name, estimatedTime) {
+  const { data: existing } = await supabase
+    .from('shift_tasks')
+    .select('position')
+    .eq('shift', shiftKey)
+    .eq('active', true)
+    .order('position', { ascending: false })
+    .limit(1)
+  const nextPos = (existing?.[0]?.position ?? -1) + 1
+  const { data, error } = await supabase
+    .from('shift_tasks')
+    .insert({ shift: shiftKey, name, estimated_time: estimatedTime, position: nextPos })
+    .select('id, name, estimated_time')
+    .single()
+  if (error) throw error
+  return { id: data.id, name: data.name, time: data.estimated_time }
+}
+
+export async function updateShiftTask(id, { name, time }) {
+  const { error } = await supabase
+    .from('shift_tasks')
+    .update({ name, estimated_time: time })
+    .eq('id', id)
+  if (error) throw error
+}
+
+export async function deleteShiftTask(id) {
+  const { error } = await supabase
+    .from('shift_tasks')
+    .update({ active: false })
+    .eq('id', id)
+  if (error) throw error
+}
+
+export async function moveShiftTask(id, siblingId) {
+  // Swap positions of two adjacent tasks
+  const { data, error } = await supabase
+    .from('shift_tasks')
+    .select('id, position')
+    .in('id', [id, siblingId])
+  if (error) throw error
+  const [a, b] = data
+  await Promise.all([
+    supabase.from('shift_tasks').update({ position: b.position }).eq('id', a.id),
+    supabase.from('shift_tasks').update({ position: a.position }).eq('id', b.id),
+  ])
+}
+
 // ── Rate Variance Alerts ─────────────────────
 export async function saveVarianceAlert({ agentId, agentName, shift, date, hotel, period, startRate, newRate }) {
   const { error } = await supabase

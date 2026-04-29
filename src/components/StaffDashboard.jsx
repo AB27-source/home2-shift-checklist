@@ -242,6 +242,7 @@ function computeFormDiff(origMeta, newMeta, origTaskState, newTaskState, tasks) 
 export default function StaffDashboard({
   agent,
   handoff,
+  shiftTasks,
   onViewLogs,
   onSignOut,
   showToast,
@@ -578,7 +579,7 @@ export default function StaffDashboard({
   }
 
   // ── Derived values ────────────────────────────────────────────────────────
-  const tasks = SHIFTS[shift].tasks;
+  const tasks = shiftTasks?.[shift] ?? SHIFTS[shift].tasks;
   const doneCount = tasks.filter((t) => taskState[t.id]?.done).length;
   const pct = tasks.length ? Math.round((doneCount / tasks.length) * 100) : 0;
 

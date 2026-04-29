@@ -4,13 +4,14 @@ import { VARIANCE_THRESHOLD, PERIOD_LABELS } from '../../data/rateShop'
 import ShiftHistory      from './ShiftHistory'
 import ShiftCalendar     from './ShiftCalendar'
 import AgentManager      from './AgentManager'
+import ChecklistManager  from './ChecklistManager'
 import ShiftLogBrowser   from '../ShiftLogBrowser'
 import HotelSnapshot     from './HotelSnapshot'
 import RateShopSnapshot  from './RateShopSnapshot'
 import RateShopHistory   from './RateShopHistory'
 import styles from './Dashboard.module.css'
 
-export default function Dashboard({ agent, agents, sessionToken, onSignOut, showToast, onAgentsChange, handoff, onHandoffUpdate }) {
+export default function Dashboard({ agent, agents, sessionToken, onSignOut, showToast, onAgentsChange, handoff, onHandoffUpdate, shiftTasks, onShiftTasksChange }) {
   const [tab, setTab]           = useState('history')
   const [records, setRecords]   = useState([])
   const [loading, setLoading]   = useState(true)
@@ -102,6 +103,7 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
             </button>
             <button className={`${styles.tab} ${tab === 'calendar' ? styles.active : ''}`} onClick={() => setTab('calendar')}>Calendar</button>
             <button className={`${styles.tab} ${tab === 'agents'   ? styles.active : ''}`} onClick={() => setTab('agents')}>Agent Profiles</button>
+            <button className={`${styles.tab} ${tab === 'checklist' ? styles.active : ''}`} onClick={() => setTab('checklist')}>Checklist</button>
           </div>
         </div>
 
@@ -237,6 +239,13 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
               agents={agents}
               sessionToken={sessionToken}
               onAgentsChange={onAgentsChange}
+              showToast={showToast}
+            />
+          )}
+          {tab === 'checklist' && (
+            <ChecklistManager
+              shiftTasks={shiftTasks}
+              onShiftTasksChange={onShiftTasksChange}
               showToast={showToast}
             />
           )}

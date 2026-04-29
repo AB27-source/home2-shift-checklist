@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { getAgents, getHandoff, restoreAgentSession, signOutAgentSession, isAppSessionError } from './lib/supabase'
+import { getAgents, getHandoff, getShiftTasks, restoreAgentSession, signOutAgentSession, isAppSessionError } from './lib/supabase'
+import { SHIFTS } from './data/shifts'
 import LoginScreen     from './components/LoginScreen'
 import PinScreen       from './components/PinScreen'
 import StaffDashboard  from './components/StaffDashboard'
@@ -16,6 +17,11 @@ export default function App() {
   const [screen, setScreen]         = useState('loading')
   const [agents, setAgents]         = useState([])
   const [handoff, setHandoff]       = useState(null)
+  const [shiftTasks, setShiftTasks] = useState({
+    morning: SHIFTS.morning.tasks,
+    swing:   SHIFTS.swing.tasks,
+    night:   SHIFTS.night.tasks,
+  })
   const [selectedAgent, setSelectedAgent] = useState(null)
   const [currentAgent, setCurrentAgent]   = useState(null)
   const [sessionToken, setSessionToken]   = useState(null)
@@ -29,9 +35,10 @@ export default function App() {
 
   const loadInitialData = useCallback(async () => {
     try {
-      const [agentsData, handoffData] = await Promise.all([getAgents(), getHandoff()])
+      const [agentsData, handoffData, tasksData] = await Promise.all([getAgents(), getHandoff(), getShiftTasks()])
       setAgents(agentsData)
       setHandoff(handoffData)
+      if (tasksData) setShiftTasks(tasksData)
       setBootError('')
       return { agentsData, handoffData }
     } catch (e) {
@@ -175,6 +182,7 @@ export default function App() {
           <StaffDashboard
             agent={currentAgent}
             handoff={handoff}
+            shiftTasks={shiftTasks}
             onViewLogs={() => setScreen('logs')}
             onSignOut={handleSignOut}
             showToast={showToast}
@@ -197,6 +205,8 @@ export default function App() {
             onAgentsChange={setAgents}
             handoff={handoff}
             onHandoffUpdate={setHandoff}
+            shiftTasks={shiftTasks}
+            onShiftTasksChange={setShiftTasks}
           />
         )}
       </PageTransition>
