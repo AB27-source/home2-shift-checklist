@@ -1,12 +1,12 @@
 export const THEMES = [
-  { id: 'dracula-bg',     label: 'Background', brand: '#282A36', mid: '#6272a4', light: '#eeeef8' },
-  { id: 'dracula-red',    label: 'Red',        brand: '#FF5555', mid: '#ff9090', light: '#fff0f0' },
-  { id: 'dracula-orange', label: 'Orange',     brand: '#FFB86C', mid: '#c47a0a', light: '#fff7ee' },
-  { id: 'dracula-yellow', label: 'Yellow',     brand: '#F1FA8C', mid: '#8a9e00', light: '#fafde8' },
-  { id: 'dracula-green',  label: 'Green',      brand: '#50FA7B', mid: '#00a832', light: '#eafff1' },
-  { id: 'dracula-cyan',   label: 'Cyan',       brand: '#8BE9FD', mid: '#0088bb', light: '#e8f9ff' },
-  { id: 'dracula-purple', label: 'Purple',     brand: '#BD93F9', mid: '#7c3aed', light: '#f3edff' },
-  { id: 'dracula-pink',   label: 'Pink',       brand: '#FF79C6', mid: '#cc0080', light: '#ffe8f5' },
+  { id: 'theme-navy',    label: 'Navy',    brand: '#1E3A5F', mid: '#3B6FA0', light: '#EDF2F8' },
+  { id: 'theme-slate',   label: 'Slate',   brand: '#334155', mid: '#64748B', light: '#F1F5F9' },
+  { id: 'theme-crimson', label: 'Crimson', brand: '#991B1B', mid: '#DC2626', light: '#FEF2F2' },
+  { id: 'theme-amber',   label: 'Amber',   brand: '#92400E', mid: '#D97706', light: '#FFFBEB' },
+  { id: 'theme-forest',  label: 'Forest',  brand: '#14532D', mid: '#16A34A', light: '#F0FDF4' },
+  { id: 'theme-teal',    label: 'Teal',    brand: '#0E5F75', mid: '#0891B2', light: '#ECFEFF' },
+  { id: 'theme-violet',  label: 'Violet',  brand: '#4C1D95', mid: '#7C3AED', light: '#F5F3FF' },
+  { id: 'theme-rose',    label: 'Rose',    brand: '#881337', mid: '#E11D48', light: '#FFF1F2' },
 ]
 
 function hexToRgb(hex) {

@@ -1,9 +1,9 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --brand:      #282A36;
-  --brand-light:#eeeef8;
-  --brand-mid:  #6272a4;
+  --brand:      #1E3A5F;
+  --brand-light:#EDF2F8;
+  --brand-mid:  #3B6FA0;
   --success:    #1b5e20;
   --success-bg: #e8f5e9;
   --warn:       #e65100;
