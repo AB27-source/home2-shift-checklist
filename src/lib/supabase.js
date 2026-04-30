@@ -35,6 +35,7 @@ function normalizeAgent(row) {
     color: row.color,
     is_admin: row.is_admin === true,
     is_super_admin: row.is_super_admin === true,
+    theme: row.theme || null,
   }
 }
 
@@ -118,6 +119,11 @@ export async function updateAgent(sessionToken, id, fields) {
     if (isMissingRpc(error, 'admin_update_agent')) throw createMigrationRequiredError('editing agents')
     throw error
   }
+}
+
+export async function saveAgentTheme(agentId, theme) {
+  const { error } = await supabase.from('agents').update({ theme }).eq('id', agentId)
+  if (error) throw error
 }
 
 export async function resetAgentPin(sessionToken, id, pin) {

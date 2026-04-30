@@ -66,7 +66,7 @@ export default function App() {
           if (cachedSession?.sessionToken) {
             const restoredAgent = await restoreAgentSession(cachedSession.sessionToken)
             if (restoredAgent) {
-              loadSavedTheme(restoredAgent.id)
+              loadSavedTheme(restoredAgent.id, restoredAgent.theme)
               setCurrentAgent(restoredAgent)
               setSessionToken(cachedSession.sessionToken)
               try {
@@ -124,7 +124,7 @@ export default function App() {
         sessionToken: nextSessionToken,
       }))
     } catch(e) {}
-    loadSavedTheme(agent.id)
+    loadSavedTheme(agent.id, agent.theme)
     setCurrentAgent(agent)
     setSessionToken(nextSessionToken)
     setScreen(agent.is_admin ? 'manager' : 'home')

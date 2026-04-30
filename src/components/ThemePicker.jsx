@@ -1,13 +1,15 @@
 import { useState, useRef, useEffect } from 'react'
 import { THEMES, deriveTheme, saveTheme, getSavedBrand } from '../lib/theme'
+import { saveAgentTheme } from '../lib/supabase'
 import styles from './ThemePicker.module.css'
 
 export default function ThemePicker({ agentId }) {
   const [open, setOpen] = useState(false)
   const [customColor, setCustomColor] = useState(
-    () => getSavedBrand(agentId) || '#1B1B6B'
+    () => getSavedBrand(agentId) || '#282A36'
   )
   const ref = useRef()
+  const dbSaveTimer = useRef(null)
 
   useEffect(() => {
     if (!open) return
@@ -20,13 +22,20 @@ export default function ThemePicker({ agentId }) {
 
   function handlePreset(theme) {
     saveTheme(agentId, theme)
+    saveAgentTheme(agentId, theme).catch(() => {})
     setCustomColor(theme.brand)
     setOpen(false)
   }
 
   function handleCustom(hex) {
     setCustomColor(hex)
-    saveTheme(agentId, deriveTheme(hex))
+    const theme = deriveTheme(hex)
+    saveTheme(agentId, theme)
+    // Debounce DB write — color picker fires on every drag pixel
+    clearTimeout(dbSaveTimer.current)
+    dbSaveTimer.current = setTimeout(() => {
+      saveAgentTheme(agentId, theme).catch(() => {})
+    }, 600)
   }
 
   return (

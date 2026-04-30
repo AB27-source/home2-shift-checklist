@@ -51,10 +51,19 @@ export function applyTheme({ brand, mid, light }) {
 
 const storageKey = (id) => `home2_theme_${id}`
 
-export function loadSavedTheme(agentId) {
+export function loadSavedTheme(agentId, dbTheme = null) {
   try {
-    const saved = agentId ? localStorage.getItem(storageKey(agentId)) : null
-    applyTheme(saved ? JSON.parse(saved) : THEMES[0])
+    let theme = dbTheme
+    if (!theme && agentId) {
+      const cached = localStorage.getItem(storageKey(agentId))
+      if (cached) theme = JSON.parse(cached)
+    }
+    theme = theme || THEMES[0]
+    applyTheme(theme)
+    // Keep localStorage in sync with DB value
+    if (dbTheme && agentId) {
+      try { localStorage.setItem(storageKey(agentId), JSON.stringify(dbTheme)) } catch {}
+    }
   } catch {
     applyTheme(THEMES[0])
   }
