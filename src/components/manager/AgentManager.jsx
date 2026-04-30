@@ -111,7 +111,7 @@ export default function AgentManager({ agents, currentAgent, sessionToken, onAge
             <span className={styles.protectedNote}>Protected account</span>
           ) : (
             <>
-              {!isGM && <button className="btn-sm" onClick={() => setModal({ type: 'edit', agent })}>Edit</button>}
+              {(!isGM || !isAdmin) && <button className="btn-sm" onClick={() => setModal({ type: 'edit', agent })}>Edit</button>}
               {canResetPin && <button className="btn-sm" onClick={() => setModal({ type: 'pin', agent })}>Reset PIN</button>}
               {canRemove && <button className="btn-sm danger" onClick={() => handleRemove(agent)}>Remove</button>}
             </>
