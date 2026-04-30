@@ -125,7 +125,7 @@ export default function NightAuditForm({ meta, onMetaChange }) {
             <textarea
               className={styles.textarea}
               rows={Math.max(3, rateAdjCount)}
-              placeholder={"Room 205: Rate corrected from $189 to $159 — manager approved\nGuest 3412: $25 refund for noise complaint"}
+              placeholder={"Room 205: Rate corrected from $189 to $159 — manager approved"}
               value={f('na_rate_adj_detail')}
               onChange={ch('na_rate_adj_detail')}
             />

@@ -109,7 +109,7 @@ export default function RegularShiftForm({ meta, onMetaChange, shiftLabel }) {
             <textarea
               className={styles.textarea}
               rows={Math.max(3, refundCount)}
-              placeholder={"Room 205: Rate corrected from $189 to $159 — manager approved\nGuest 3412: $25 refund for noise complaint"}
+              placeholder={"Room 205: Rate corrected from $189 to $159 — manager approved"}
               value={f('refunds_detail')}
               onChange={ch('refunds_detail')}
             />
