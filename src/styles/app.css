@@ -79,8 +79,9 @@ body {
 .btn-submit:hover   { background: #0e7490; }
 .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-sm { padding: 4px 12px; font-size: 11px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: inherit; }
-.btn-sm:hover  { border-color: var(--brand); color: var(--brand); }
-.btn-sm.danger:hover { border-color: var(--danger); color: var(--danger); }
+.btn-sm:hover:not(:disabled)  { border-color: var(--brand); color: var(--brand); }
+.btn-sm.danger:hover:not(:disabled) { border-color: var(--danger); color: var(--danger); }
+.btn-sm:disabled { opacity: 0.35; cursor: not-allowed; }
 
 /* ── Form fields ── */
 .field       { margin-bottom: 12px; }

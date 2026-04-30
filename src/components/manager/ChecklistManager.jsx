@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { addShiftTask, updateShiftTask, deleteShiftTask, moveShiftTask } from '../../lib/supabase'
+import { addShiftTask, updateShiftTask, deleteShiftTask, moveShiftTask, toggleLockTask } from '../../lib/supabase'
 import styles from './ChecklistManager.module.css'
 
 const SHIFT_LABELS = {
@@ -107,6 +107,17 @@ function ShiftTaskList({ shiftKey, tasks, onUpdate, showToast }) {
     }
   }
 
+  async function handleToggleLock(id, currentLocked) {
+    const next = !currentLocked
+    try {
+      await toggleLockTask(id, next)
+      onUpdate(tasks.map(t => t.id === id ? { ...t, locked: next } : t))
+      showToast(next ? 'Task locked' : 'Task unlocked')
+    } catch {
+      showToast('Failed to update lock')
+    }
+  }
+
   return (
     <div className={styles.listWrap}>
       {tasks.length === 0 && !adding && (
@@ -124,7 +135,7 @@ function ShiftTaskList({ shiftKey, tasks, onUpdate, showToast }) {
             onCancel={() => setEditingId(null)}
           />
         ) : (
-          <div key={task.id} className={styles.taskRow}>
+          <div key={task.id} className={`${styles.taskRow} ${task.locked ? styles.taskRowLocked : ''}`}>
             <div className={styles.taskNum}>{idx + 1}</div>
             <div className={styles.taskBody}>
               <span className={styles.taskName}>{task.name}</span>
@@ -132,19 +143,36 @@ function ShiftTaskList({ shiftKey, tasks, onUpdate, showToast }) {
             </div>
             <div className={styles.taskActions}>
               <button
+                className={`${styles.lockBtn} ${task.locked ? styles.lockBtnActive : ''}`}
+                onClick={() => handleToggleLock(task.id, task.locked)}
+                title={task.locked ? 'Unlock task' : 'Lock task'}
+              >
+                {task.locked ? '🔒' : '🔓'}
+              </button>
+              <button
                 className={styles.iconBtn}
                 onClick={() => handleMove(task.id, 'up')}
-                disabled={idx === 0}
+                disabled={idx === 0 || task.locked}
                 title="Move up"
               >▲</button>
               <button
                 className={styles.iconBtn}
                 onClick={() => handleMove(task.id, 'down')}
-                disabled={idx === tasks.length - 1}
+                disabled={idx === tasks.length - 1 || task.locked}
                 title="Move down"
               >▼</button>
-              <button className="btn-sm" onClick={() => setEditingId(task.id)}>Edit</button>
-              <button className="btn-sm danger" onClick={() => handleDelete(task.id)}>Remove</button>
+              <button
+                className="btn-sm"
+                onClick={() => setEditingId(task.id)}
+                disabled={task.locked}
+                title={task.locked ? 'Unlock to edit' : undefined}
+              >Edit</button>
+              <button
+                className="btn-sm danger"
+                onClick={() => handleDelete(task.id)}
+                disabled={task.locked}
+                title={task.locked ? 'Unlock to remove' : undefined}
+              >Remove</button>
             </div>
           </div>
         )

@@ -153,14 +153,14 @@ export async function deactivateAgent(sessionToken, id) {
 export async function getShiftTasks() {
   const { data, error } = await supabase
     .from('shift_tasks')
-    .select('id, shift, name, estimated_time, position')
+    .select('id, shift, name, estimated_time, position, locked')
     .eq('active', true)
     .order('position', { ascending: true })
   if (error) return null
   const grouped = { morning: [], swing: [], night: [] }
   for (const row of (data || [])) {
     if (grouped[row.shift]) {
-      grouped[row.shift].push({ id: row.id, name: row.name, time: row.estimated_time })
+      grouped[row.shift].push({ id: row.id, name: row.name, time: row.estimated_time, locked: row.locked === true })
     }
   }
   return grouped
@@ -188,6 +188,14 @@ export async function updateShiftTask(id, { name, time }) {
   const { error } = await supabase
     .from('shift_tasks')
     .update({ name, estimated_time: time })
+    .eq('id', id)
+  if (error) throw error
+}
+
+export async function toggleLockTask(id, locked) {
+  const { error } = await supabase
+    .from('shift_tasks')
+    .update({ locked })
     .eq('id', id)
   if (error) throw error
 }

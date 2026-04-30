@@ -50,6 +50,12 @@
 .taskRow:last-of-type { border-bottom: none; }
 .taskRow:hover { background: var(--surface); }
 
+.taskRowLocked {
+  background: #fffbeb;
+  border-left: 3px solid #f59e0b;
+}
+.taskRowLocked:hover { background: #fef9e7; }
+
 .taskNum {
   width: 24px; height: 24px; border-radius: 50%;
   background: var(--surface); border: 1px solid var(--border);
@@ -67,6 +73,20 @@
 
 .taskActions {
   display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+}
+
+.lockBtn {
+  background: none; border: 1px solid var(--border);
+  border-radius: var(--r); padding: 2px 7px;
+  font-size: 12px; cursor: pointer; line-height: 1.6;
+  color: var(--muted);
+  transition: border-color var(--dur-fast), background var(--dur-fast);
+}
+.lockBtn:hover { border-color: #f59e0b; background: #fffbeb; }
+.lockBtnActive {
+  border-color: #f59e0b;
+  background: #fef3c7;
+  color: #92400e;
 }
 
 .iconBtn {
