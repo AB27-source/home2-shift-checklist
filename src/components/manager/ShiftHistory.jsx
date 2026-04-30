@@ -247,7 +247,7 @@ export default function ShiftHistory({ records, agents, sessionToken, loading, o
           ? <div style={{ padding: '32px 20px', textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>
               No shift records found. Records appear after agents complete their checklists.
             </div>
-          : <table className={styles.table}>
+          : <div className={styles.tableWrap}><table className={styles.table}>
               <thead>
                 <tr>
                   <th className={styles.checkCol}>
@@ -332,7 +332,7 @@ export default function ShiftHistory({ records, agents, sessionToken, loading, o
                   ]
                 })}
               </tbody>
-            </table>
+            </table></div>
         }
       </div>
     </div>

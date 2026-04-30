@@ -111,5 +111,12 @@ body {
 
 @media (max-width: 500px) {
   .main { padding: 10px; }
+  .topbar { padding: 0 12px; }
+  .topbar-left, .topbar-right { gap: 6px; }
+  .topbar-title { font-size: 13px; }
+  .topbar-sub   { display: none; }
   .topbar-progress { display: none; }
+  .topbar-agent-badge { font-size: 11px; padding: 3px 8px; }
+  .signout-btn { font-size: 11px; padding: 4px 8px; }
+  .toast { bottom: 12px; right: 12px; left: 12px; text-align: center; }
 }

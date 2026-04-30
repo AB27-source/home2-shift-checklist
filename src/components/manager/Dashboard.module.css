@@ -34,6 +34,21 @@
 /* ── Below-the-fold section spacing ── */
 .belowGrid { display: flex; flex-direction: column; gap: 16px; }
 
+/* ── Mobile ── */
+@media (max-width: 700px) {
+  .wrap { padding: 12px 14px; }
+  .header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .tabs { flex-wrap: wrap; }
+  .statsGrid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .statCard  { padding: 12px 14px; }
+  .statNum   { font-size: 22px; }
+  .snapshotGrid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 440px) {
+  .statsGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* ── Active handoff banner ── */
 .handoffBanner {
   display: flex;
@@ -73,6 +88,14 @@
 }
 .handoffClear:hover    { background: rgba(246,216,96,0.3); }
 .handoffClear:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 500px) {
+  .handoffBanner { flex-wrap: wrap; }
+  .alertRow { gap: 6px; }
+  .alertMeta { margin-left: 0; width: 100%; }
+  .thresholdBar { gap: 8px; }
+  .thresholdHint { width: 100%; }
+}
 
 /* ── Tab alert badge ── */
 .tabBadge {
