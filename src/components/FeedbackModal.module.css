@@ -1,4 +1,17 @@
-.modal { max-width: 440px !important; }
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 200;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 24px 20px;
+  overflow-y: auto;
+}
+
+.modal {
+  max-width: 440px !important;
+  width: 100%;
+  margin: auto;
+}
 
 .doneIcon { font-size: 36px; text-align: center; margin-bottom: 8px; }
 

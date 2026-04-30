@@ -86,7 +86,7 @@ export default function FeedbackModal({ agent, onClose }) {
   }
 
   if (done) return (
-    <div className="modal-overlay">
+    <div className={styles.overlay}>
       <div className={`modal ${styles.modal}`}>
         <div className={styles.doneIcon}>✅</div>
         <div className="modal-title" style={{ textAlign: 'center' }}>Feedback sent!</div>
@@ -101,7 +101,7 @@ export default function FeedbackModal({ agent, onClose }) {
   )
 
   return (
-    <div className="modal-overlay">
+    <div className={styles.overlay}>
       <div className={`modal ${styles.modal}`}>
         <div className="modal-title">💬 Share Feedback</div>
         <div className="modal-sub">Suggestions, issues, or ideas — your input goes straight to management.</div>
