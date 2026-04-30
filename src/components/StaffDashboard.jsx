@@ -1053,13 +1053,15 @@ export default function StaffDashboard({
                 ← Dashboard
               </button>
             )}
-            <button
-              className="signout-btn"
-              style={{ background: "rgba(255,255,255,0.18)" }}
-              onClick={() => setShowFeedback(true)}
-            >
-              Feedback
-            </button>
+            {agent.is_super_admin && (
+              <button
+                className="signout-btn"
+                style={{ background: "rgba(255,255,255,0.18)" }}
+                onClick={() => setShowFeedback(true)}
+              >
+                Feedback
+              </button>
+            )}
             <button
               className="signout-btn"
               style={{ background: "rgba(255,255,255,0.18)" }}

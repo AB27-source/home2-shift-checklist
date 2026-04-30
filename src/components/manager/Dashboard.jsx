@@ -97,7 +97,7 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
         <div className="topbar-right">
           <div className="topbar-agent-badge" style={{ background: 'rgba(255,200,100,0.25)' }}>⭐ Manager</div>
           <button className="signout-btn" style={{ background: 'rgba(255,255,255,0.18)' }} onClick={onLogShift}>Log a Shift</button>
-          <button className="signout-btn" style={{ background: 'rgba(255,255,255,0.18)' }} onClick={() => setShowFeedback(true)}>Feedback</button>
+          {agent?.is_super_admin && <button className="signout-btn" style={{ background: 'rgba(255,255,255,0.18)' }} onClick={() => setShowFeedback(true)}>Feedback</button>}
           <button className="signout-btn" onClick={onSignOut}>Sign out</button>
         </div>
       </div>
@@ -113,9 +113,11 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
             <button className={`${styles.tab} ${tab === 'calendar' ? styles.active : ''}`} onClick={() => setTab('calendar')}>Calendar</button>
             <button className={`${styles.tab} ${tab === 'agents'   ? styles.active : ''}`} onClick={() => setTab('agents')}>Agent Profiles</button>
             <button className={`${styles.tab} ${tab === 'checklist' ? styles.active : ''}`} onClick={() => setTab('checklist')}>Checklist</button>
-            <button className={`${styles.tab} ${tab === 'feedback' ? styles.active : ''}`} onClick={() => setTab('feedback')}>
-              Feedback{feedbackList.length > 0 && <span className={styles.tabBadge}>{feedbackList.length}</span>}
-            </button>
+            {agent?.is_super_admin && (
+              <button className={`${styles.tab} ${tab === 'feedback' ? styles.active : ''}`} onClick={() => setTab('feedback')}>
+                Feedback{feedbackList.length > 0 && <span className={styles.tabBadge}>{feedbackList.length}</span>}
+              </button>
+            )}
           </div>
         </div>
 
