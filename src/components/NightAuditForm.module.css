@@ -30,22 +30,22 @@
 }
 
 .labelCorner {
-  border-right: 1px solid rgba(255,255,255,0.18);
+  border-right: 1px solid var(--topbar-border);
 }
 
 .colHead {
   padding: 8px 6px;
-  color: #fff;
+  color: var(--topbar-text);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   text-align: center;
-  border-left: 1px solid rgba(255,255,255,0.18);
+  border-left: 1px solid var(--topbar-border);
 }
 
 .colHead.newCol {
-  background: rgba(255,255,255,0.12);
+  background: var(--topbar-btn-bg);
 }
 
 .tableRow {
@@ -89,12 +89,13 @@
 }
 
 .tableInput.newInput {
-  background: #f0f4ff;
+  background: var(--brand-light);
   font-weight: 600;
 }
 
 .tableInput.newInput:focus {
-  background: #e5ecff;
+  background: var(--brand-light);
+  border-left-color: var(--brand);
 }
 
 /* ── Activity grid (4 number fields in a row) ── */
