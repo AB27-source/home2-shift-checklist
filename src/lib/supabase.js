@@ -208,6 +208,23 @@ export async function moveShiftTask(id, siblingId) {
   ])
 }
 
+// ── Feedback ─────────────────────────────────
+export async function saveFeedback({ agentId, agentName, agentRole, message, attachments }) {
+  const { error } = await supabase
+    .from('feedback')
+    .insert({ agent_id: agentId, agent_name: agentName, agent_role: agentRole, message, attachments: attachments || [] })
+  if (error) throw error
+}
+
+export async function getFeedback() {
+  const { data, error } = await supabase
+    .from('feedback')
+    .select('*')
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data || []
+}
+
 // ── Rate Variance Alerts ─────────────────────
 export async function saveVarianceAlert({ agentId, agentName, shift, date, hotel, period, startRate, newRate }) {
   const { error } = await supabase

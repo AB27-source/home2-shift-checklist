@@ -1,0 +1,59 @@
+.modal { max-width: 440px !important; }
+
+.doneIcon { font-size: 36px; text-align: center; margin-bottom: 8px; }
+
+.fromRow {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 8px 12px;
+  margin-bottom: 4px;
+}
+.fromLabel { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.fromName  { font-size: 13px; font-weight: 600; color: var(--text); }
+.fromRole  { font-size: 12px; color: var(--muted); }
+
+/* ── Attachments ── */
+.attachSection {
+  border: 1px solid var(--border); border-radius: var(--r);
+  overflow: hidden; margin-bottom: 4px;
+}
+.attachHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.attachLabel { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.attachAddBtn {
+  font-size: 11px; font-weight: 600; color: var(--brand);
+  cursor: pointer; padding: 2px 8px; border-radius: 20px;
+  border: 1px solid var(--brand); background: transparent;
+  transition: background var(--dur-fast);
+}
+.attachAddBtn:hover { background: var(--brand-light); }
+
+.attachEmpty {
+  padding: 14px 12px; font-size: 12px; color: var(--muted);
+  text-align: center; line-height: 1.6;
+}
+
+.fileList { padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; }
+.fileChip {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--r);
+  padding: 6px 10px;
+}
+.fileName { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fileName a { color: var(--brand); text-decoration: none; }
+.fileName a:hover { text-decoration: underline; }
+.fileSize { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+.fileRemove {
+  background: none; border: none; color: var(--muted);
+  cursor: pointer; font-size: 11px; padding: 0 2px; flex-shrink: 0;
+}
+.fileRemove:hover { color: var(--danger); }
+
+.uploadingRow {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; font-size: 12px; color: var(--muted);
+}

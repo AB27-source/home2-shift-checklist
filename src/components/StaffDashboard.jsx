@@ -32,6 +32,7 @@ import TaskItem from "./TaskItem";
 import PriorShifts from "./PriorShifts";
 import PreviousShiftLogs from "./PreviousShiftLogs";
 import HotelSnapshot from "./HotelSnapshot";
+import FeedbackModal from "./FeedbackModal";
 import styles from "./StaffDashboard.module.css";
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -258,6 +259,7 @@ export default function StaffDashboard({
     getWindowStatus(getShiftByTime()),
   );
   const [showPrior, setShowPrior] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
 
   // ── Form open/close state ────────────────────────────────────────────────
   const [formOpen, setFormOpen] = useState(false);
@@ -1044,6 +1046,13 @@ export default function StaffDashboard({
             <button
               className="signout-btn"
               style={{ background: "rgba(255,255,255,0.18)" }}
+              onClick={() => setShowFeedback(true)}
+            >
+              Feedback
+            </button>
+            <button
+              className="signout-btn"
+              style={{ background: "rgba(255,255,255,0.18)" }}
               onClick={() => setShowPrior(true)}
             >
               Prior Shifts
@@ -1656,6 +1665,9 @@ export default function StaffDashboard({
       </div>
       {showPrior && (
         <PriorShifts agent={agent} onClose={() => setShowPrior(false)} />
+      )}
+      {showFeedback && (
+        <FeedbackModal agent={agent} onClose={() => setShowFeedback(false)} />
       )}
     </>
   );

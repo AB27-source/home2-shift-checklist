@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { getShiftRecords, setHandoff, getTodayVarianceAlerts, subscribeVarianceAlerts } from '../../lib/supabase'
+import { getShiftRecords, setHandoff, getTodayVarianceAlerts, subscribeVarianceAlerts, getFeedback } from '../../lib/supabase'
 import { VARIANCE_THRESHOLD, PERIOD_LABELS } from '../../data/rateShop'
+import FeedbackModal from '../FeedbackModal'
 import ShiftHistory      from './ShiftHistory'
 import ShiftCalendar     from './ShiftCalendar'
 import AgentManager      from './AgentManager'
@@ -19,6 +20,12 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
   const [thresholdEdit, setThresholdEdit] = useState(null)
   const [savingThreshold, setSavingThreshold] = useState(false)
   const [varianceAlerts, setVarianceAlerts] = useState([])
+  const [feedbackList, setFeedbackList] = useState([])
+  const [showFeedback, setShowFeedback] = useState(false)
+
+  useEffect(() => {
+    getFeedback().then(setFeedbackList).catch(() => {})
+  }, [])
 
   useEffect(() => {
     getTodayVarianceAlerts().then(setVarianceAlerts).catch(() => {})
@@ -89,6 +96,7 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
         </div>
         <div className="topbar-right">
           <div className="topbar-agent-badge" style={{ background: 'rgba(255,200,100,0.25)' }}>⭐ Manager</div>
+          <button className="signout-btn" style={{ background: 'rgba(255,255,255,0.18)' }} onClick={() => setShowFeedback(true)}>Feedback</button>
           <button className="signout-btn" onClick={onSignOut}>Sign out</button>
         </div>
       </div>
@@ -104,6 +112,9 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
             <button className={`${styles.tab} ${tab === 'calendar' ? styles.active : ''}`} onClick={() => setTab('calendar')}>Calendar</button>
             <button className={`${styles.tab} ${tab === 'agents'   ? styles.active : ''}`} onClick={() => setTab('agents')}>Agent Profiles</button>
             <button className={`${styles.tab} ${tab === 'checklist' ? styles.active : ''}`} onClick={() => setTab('checklist')}>Checklist</button>
+            <button className={`${styles.tab} ${tab === 'feedback' ? styles.active : ''}`} onClick={() => setTab('feedback')}>
+              Feedback{feedbackList.length > 0 && <span className={styles.tabBadge}>{feedbackList.length}</span>}
+            </button>
           </div>
         </div>
 
@@ -249,8 +260,14 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
               showToast={showToast}
             />
           )}
+          {tab === 'feedback' && (
+            <FeedbackTab items={feedbackList} />
+          )}
         </div>
       </div>
+      {showFeedback && (
+        <FeedbackModal agent={agent} onClose={() => setShowFeedback(false)} />
+      )}
     </div>
   )
 }
@@ -258,4 +275,58 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
 function daysSince(dateStr) {
   if (!dateStr) return 999
   return Math.floor((Date.now() - new Date(dateStr)) / 86400000)
+}
+
+const FILE_ICONS = {
+  pdf: '📄', doc: '📝', docx: '📝', xls: '📊', xlsx: '📊',
+  png: '🖼️', jpg: '🖼️', jpeg: '🖼️', gif: '🖼️', webp: '🖼️',
+  txt: '📃', csv: '📃',
+}
+function getIcon(name) { return FILE_ICONS[(name?.split('.').pop() || '').toLowerCase()] || '📎' }
+
+function FeedbackTab({ items }) {
+  if (!items.length) return (
+    <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>
+      No feedback submitted yet.
+    </div>
+  )
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {items.map(item => {
+        const time = new Date(item.created_at).toLocaleString([], {
+          month: 'short', day: 'numeric', year: 'numeric',
+          hour: '2-digit', minute: '2-digit',
+        })
+        return (
+          <div key={item.id} className="card" style={{ padding: '14px 16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <strong style={{ fontSize: 13 }}>{item.agent_name}</strong>
+                <span style={{ fontSize: 11, color: 'var(--muted)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 20, padding: '1px 8px' }}>{item.agent_role || 'Staff'}</span>
+              </div>
+              <span style={{ fontSize: 11, color: 'var(--muted)' }}>{time}</span>
+            </div>
+            <p style={{ fontSize: 13, lineHeight: 1.65, whiteSpace: 'pre-wrap', marginBottom: item.attachments?.length ? 10 : 0 }}>
+              {item.message}
+            </p>
+            {item.attachments?.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+                {item.attachments.map((a, i) => (
+                  <a
+                    key={i}
+                    href={a.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--brand)', background: 'var(--brand-light)', borderRadius: 20, padding: '3px 10px', textDecoration: 'none' }}
+                  >
+                    {getIcon(a.name)} {a.name}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
 }
