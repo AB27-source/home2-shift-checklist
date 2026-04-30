@@ -189,6 +189,7 @@ export default function App() {
             onSignOut={handleSignOut}
             showToast={showToast}
             onHandoffUpdate={setHandoff}
+            onBackToDashboard={currentAgent.is_admin ? () => setScreen('manager') : undefined}
           />
         )}
         {screen === 'logs' && currentAgent && (
@@ -209,6 +210,7 @@ export default function App() {
             onHandoffUpdate={setHandoff}
             shiftTasks={shiftTasks}
             onShiftTasksChange={setShiftTasks}
+            onLogShift={() => setScreen('home')}
           />
         )}
       </PageTransition>

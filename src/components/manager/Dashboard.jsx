@@ -12,7 +12,7 @@ import RateShopSnapshot  from './RateShopSnapshot'
 import RateShopHistory   from './RateShopHistory'
 import styles from './Dashboard.module.css'
 
-export default function Dashboard({ agent, agents, sessionToken, onSignOut, showToast, onAgentsChange, handoff, onHandoffUpdate, shiftTasks, onShiftTasksChange }) {
+export default function Dashboard({ agent, agents, sessionToken, onSignOut, showToast, onAgentsChange, handoff, onHandoffUpdate, shiftTasks, onShiftTasksChange, onLogShift }) {
   const [tab, setTab]           = useState('history')
   const [records, setRecords]   = useState([])
   const [loading, setLoading]   = useState(true)
@@ -96,6 +96,7 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
         </div>
         <div className="topbar-right">
           <div className="topbar-agent-badge" style={{ background: 'rgba(255,200,100,0.25)' }}>⭐ Manager</div>
+          <button className="signout-btn" style={{ background: 'rgba(255,255,255,0.18)' }} onClick={onLogShift}>Log a Shift</button>
           <button className="signout-btn" style={{ background: 'rgba(255,255,255,0.18)' }} onClick={() => setShowFeedback(true)}>Feedback</button>
           <button className="signout-btn" onClick={onSignOut}>Sign out</button>
         </div>

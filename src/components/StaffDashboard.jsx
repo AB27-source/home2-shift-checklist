@@ -249,6 +249,7 @@ export default function StaffDashboard({
   onSignOut,
   showToast,
   onHandoffUpdate,
+  onBackToDashboard,
 }) {
   const sessionKey = SESSION_PREFIX + agent.id;
 
@@ -1043,6 +1044,15 @@ export default function StaffDashboard({
               </div>
               <span className="topbar-pct">{pct}%</span>
             </div>
+            {onBackToDashboard && (
+              <button
+                className="signout-btn"
+                style={{ background: "rgba(255,255,255,0.18)" }}
+                onClick={onBackToDashboard}
+              >
+                ← Dashboard
+              </button>
+            )}
             <button
               className="signout-btn"
               style={{ background: "rgba(255,255,255,0.18)" }}
