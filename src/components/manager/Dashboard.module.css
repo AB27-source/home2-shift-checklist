@@ -72,7 +72,13 @@
   flex: 1;
 }
 
-.handoffClear {
+.handoffBannerAccepted {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.handoffBtn {
   flex-shrink: 0;
   background: none;
   border: 1px solid #d4a800;
@@ -84,10 +90,14 @@
   cursor: pointer;
   font-family: inherit;
   white-space: nowrap;
-  transition: background 0.12s;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
 }
-.handoffClear:hover    { background: rgba(246,216,96,0.3); }
-.handoffClear:disabled { opacity: 0.5; cursor: not-allowed; }
+.handoffBtn:hover:not(:disabled) { background: rgba(246,216,96,0.3); }
+.handoffBtnAccepted {
+  border-color: #86efac;
+  color: #166534;
+  cursor: default;
+}
 
 @media (max-width: 500px) {
   .handoffBanner { flex-wrap: wrap; }

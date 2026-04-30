@@ -17,8 +17,18 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
   const [tab, setTab]           = useState('history')
   const [records, setRecords]   = useState([])
   const [loading, setLoading]   = useState(true)
-  const [clearingHandoff, setClearingHandoff] = useState(false)
   const [thresholdEdit, setThresholdEdit] = useState(null)
+
+  const handoffKey = handoff?.note
+    ? `handoff_ack_${handoff.date}_${handoff.shift}_${handoff.agent_name}`
+    : null
+  const [handoffAccepted, setHandoffAccepted] = useState(
+    () => handoffKey ? sessionStorage.getItem(handoffKey) === '1' : false
+  )
+  function handleAcceptHandoff() {
+    setHandoffAccepted(true)
+    if (handoffKey) sessionStorage.setItem(handoffKey, '1')
+  }
   const [savingThreshold, setSavingThreshold] = useState(false)
   const [varianceAlerts, setVarianceAlerts] = useState([])
   const [feedbackList, setFeedbackList] = useState([])
@@ -55,19 +65,6 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
     }
   }
 
-  async function handleClearHandoff() {
-    if (!confirm('Clear the current handoff note? Agents will no longer see it.')) return
-    setClearingHandoff(true)
-    try {
-      await setHandoff({ note: '', agent_name: '', shift: '', date: '' })
-      onHandoffUpdate?.({ note: '', agent_name: '', shift: '', date: '' })
-      showToast('Handoff note cleared')
-    } catch (e) {
-      showToast('Failed to clear handoff')
-    } finally {
-      setClearingHandoff(false)
-    }
-  }
 
   useEffect(() => {
     getShiftRecords().then(data => { setRecords(data); setLoading(false) }).catch(console.error)
@@ -125,7 +122,7 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
 
         {/* Handoff banner */}
         {handoff?.note && (
-          <div className={styles.handoffBanner}>
+          <div className={`${styles.handoffBanner} ${handoffAccepted ? styles.handoffBannerAccepted : ''}`}>
             <div className={styles.handoffBody}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, marginTop: 1 }}>
                 <rect x="1" y="2" width="12" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
@@ -139,8 +136,12 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
                 {handoff.note}
               </span>
             </div>
-            <button className={styles.handoffClear} onClick={handleClearHandoff} disabled={clearingHandoff}>
-              {clearingHandoff ? 'Clearing…' : 'Clear'}
+            <button
+              className={`${styles.handoffBtn} ${handoffAccepted ? styles.handoffBtnAccepted : ''}`}
+              onClick={handleAcceptHandoff}
+              disabled={handoffAccepted}
+            >
+              {handoffAccepted ? '✓ Accepted' : 'Accept'}
             </button>
           </div>
         )}

@@ -263,6 +263,17 @@ export default function StaffDashboard({
   const [showPrior, setShowPrior] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
 
+  const handoffKey = handoff?.note
+    ? `handoff_ack_${handoff.date}_${handoff.shift}_${handoff.agent_name}`
+    : null
+  const [handoffAccepted, setHandoffAccepted] = useState(
+    () => handoffKey ? sessionStorage.getItem(handoffKey) === '1' : false
+  )
+  function handleAcceptHandoff() {
+    setHandoffAccepted(true)
+    if (handoffKey) sessionStorage.setItem(handoffKey, '1')
+  }
+
   // ── Form open/close state ────────────────────────────────────────────────
   const [formOpen, setFormOpen] = useState(false);
 
@@ -1098,43 +1109,36 @@ export default function StaffDashboard({
 
             {/* Handoff banner */}
             {handoff?.note && (
-              <div className={styles.handoff}>
+              <div className={`${styles.handoff} ${handoffAccepted ? styles.handoffAccepted : ''}`}>
                 <svg
                   width="14"
                   height="14"
                   viewBox="0 0 14 14"
                   fill="none"
-                  style={{ flexShrink: 0, marginTop: 1 }}
+                  style={{ flexShrink: 0, marginTop: 3 }}
                 >
-                  <rect
-                    x="1"
-                    y="2"
-                    width="12"
-                    height="10"
-                    rx="1.5"
-                    stroke="currentColor"
-                    strokeWidth="1.3"
-                  />
-                  <path d="M1 5h12" stroke="currentColor" strokeWidth="1" />
-                  <path
-                    d="M4 8h6M4 10h4"
-                    stroke="currentColor"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                  />
+                  <rect x="1" y="2" width="12" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
+                  <path d="M1 5h12" stroke="currentColor" strokeWidth="1"/>
+                  <path d="M4 8h6M4 10h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
                 </svg>
-                <div>
+                <div style={{ flex: 1 }}>
                   <span className={styles.handoffLabel}>
                     Handoff from {handoff.agent_name}
                   </span>
                   {handoff.shift && handoff.date && (
                     <span className={styles.handoffMeta}>
-                      {" "}
-                      — {handoff.shift}, {handoff.date}
+                      {" "}— {handoff.shift}, {handoff.date}
                     </span>
                   )}
                   <div className={styles.handoffNote}>{handoff.note}</div>
                 </div>
+                <button
+                  className={`${styles.handoffBtn} ${handoffAccepted ? styles.handoffBtnAccepted : ''}`}
+                  onClick={handleAcceptHandoff}
+                  disabled={handoffAccepted}
+                >
+                  {handoffAccepted ? '✓ Accepted' : 'Accept'}
+                </button>
               </div>
             )}
 
