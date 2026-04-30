@@ -96,10 +96,10 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
           </div>
         </div>
         <div className="topbar-right">
-          <div className="topbar-agent-badge" style={{ background: 'rgba(255,200,100,0.25)' }}>⭐ Manager</div>
-          <button className="signout-btn" style={{ background: 'rgba(255,255,255,0.18)' }} onClick={onLogShift}>Log a Shift</button>
+          <div className="topbar-agent-badge">⭐ Manager</div>
+          <button className="signout-btn" style={{}} onClick={onLogShift}>Log a Shift</button>
           <ThemePicker agentId={agent?.id} />
-          {agent?.is_super_admin && <button className="signout-btn" style={{ background: 'rgba(255,255,255,0.18)' }} onClick={() => setShowFeedback(true)}>Feedback</button>}
+          {agent?.is_super_admin && <button className="signout-btn" style={{}} onClick={() => setShowFeedback(true)}>Feedback</button>}
           <button className="signout-btn" onClick={onSignOut}>Sign out</button>
         </div>
       </div>

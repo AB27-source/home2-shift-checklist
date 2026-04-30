@@ -20,6 +20,12 @@ function mixWhite(hex, t) {
   return `#${c(r)}${c(g)}${c(b)}`
 }
 
+function isLight(hex) {
+  const [r,g,b] = hexToRgb(hex)
+  // Perceived brightness (W3C formula)
+  return (r * 299 + g * 587 + b * 114) / 1000 > 155
+}
+
 export function deriveTheme(brand) {
   return { brand, mid: mixWhite(brand, 0.38), light: mixWhite(brand, 0.90) }
 }
@@ -29,6 +35,18 @@ export function applyTheme({ brand, mid, light }) {
   root.style.setProperty('--brand', brand)
   root.style.setProperty('--brand-mid', mid)
   root.style.setProperty('--brand-light', light)
+
+  // Topbar text/button colours — switch to dark when brand is a light colour
+  const light_topbar = isLight(brand)
+  root.style.setProperty('--topbar-text',       light_topbar ? '#1a1a2e'              : '#ffffff')
+  root.style.setProperty('--topbar-btn-bg',      light_topbar ? 'rgba(0,0,0,0.08)'    : 'rgba(255,255,255,0.14)')
+  root.style.setProperty('--topbar-btn-hover',   light_topbar ? 'rgba(0,0,0,0.14)'    : 'rgba(255,255,255,0.24)')
+  root.style.setProperty('--topbar-border',      light_topbar ? 'rgba(0,0,0,0.15)'    : 'rgba(255,255,255,0.25)')
+  root.style.setProperty('--topbar-icon-bg',     light_topbar ? 'rgba(0,0,0,0.08)'    : 'rgba(255,255,255,0.15)')
+  root.style.setProperty('--topbar-muted-bar',   light_topbar ? 'rgba(0,0,0,0.15)'    : 'rgba(255,255,255,0.25)')
+
+  // Page background — very light pastel tint of the brand colour
+  root.style.setProperty('--page-bg', mixWhite(brand, 0.95))
 }
 
 const storageKey = (id) => `home2_theme_${id}`

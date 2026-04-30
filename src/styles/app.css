@@ -17,11 +17,20 @@
   --white:      #ffffff;
   --r:          8px;
   --rlg:        12px;
+  /* Topbar — overridden by theme.js based on brand luminance */
+  --topbar-text:     #ffffff;
+  --topbar-btn-bg:   rgba(255,255,255,0.14);
+  --topbar-btn-hover:rgba(255,255,255,0.24);
+  --topbar-border:   rgba(255,255,255,0.25);
+  --topbar-icon-bg:  rgba(255,255,255,0.15);
+  --topbar-muted-bar:rgba(255,255,255,0.25);
+  /* Page background — overridden to a light tint of brand */
+  --page-bg: #f5f5f9;
 }
 
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: var(--surface);
+  background: var(--page-bg);
   color: var(--text);
   min-height: 100vh;
 }
@@ -29,7 +38,7 @@ body {
 /* ── Topbar ── */
 .topbar {
   background: var(--brand);
-  color: #fff;
+  color: var(--topbar-text);
   padding: 0 16px;
   height: 52px;
   display: flex;
@@ -41,16 +50,16 @@ body {
 }
 .topbar-left  { display: flex; align-items: center; gap: 10px; }
 .topbar-right { display: flex; align-items: center; gap: 10px; }
-.topbar-icon  { width: 30px; height: 30px; background: rgba(255,255,255,0.15); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+.topbar-icon  { width: 30px; height: 30px; background: var(--topbar-icon-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
 .topbar-title { font-size: 15px; font-weight: 600; }
 .topbar-sub   { font-size: 11px; opacity: 0.7; }
-.topbar-agent-badge { font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 20px; }
+.topbar-agent-badge { font-size: 12px; font-weight: 600; background: var(--topbar-icon-bg); padding: 4px 10px; border-radius: 20px; }
 .topbar-progress    { display: flex; align-items: center; gap: 6px; font-size: 12px; }
-.mini-bar      { width: 60px; height: 4px; background: rgba(255,255,255,0.25); border-radius: 99px; overflow: hidden; }
+.mini-bar      { width: 60px; height: 4px; background: var(--topbar-muted-bar); border-radius: 99px; overflow: hidden; }
 .mini-bar-fill { height: 4px; width: 100%; background: #7ef08d; border-radius: 99px; transform-origin: left; transition: transform 400ms var(--spring); }
 .topbar-pct    { font-weight: 600; font-size: 13px; }
-.signout-btn   { font-size: 11px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 4px 10px; border-radius: 20px; cursor: pointer; font-family: inherit; }
-.signout-btn:hover { background: rgba(255,255,255,0.22); }
+.signout-btn   { font-size: 11px; background: var(--topbar-btn-bg); border: 1px solid var(--topbar-border); color: var(--topbar-text); padding: 4px 10px; border-radius: 20px; cursor: pointer; font-family: inherit; }
+.signout-btn:hover { background: var(--topbar-btn-hover); }
 
 /* ── Cards ── */
 .card { background: var(--white); border: 1px solid var(--border); border-radius: var(--rlg); padding: 16px; margin-bottom: 12px; }

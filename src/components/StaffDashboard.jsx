@@ -1048,7 +1048,7 @@ export default function StaffDashboard({
             {onBackToDashboard && (
               <button
                 className="signout-btn"
-                style={{ background: "rgba(255,255,255,0.18)" }}
+                style={{}}
                 onClick={onBackToDashboard}
               >
                 ← Dashboard
@@ -1058,7 +1058,7 @@ export default function StaffDashboard({
             {agent.is_super_admin && (
               <button
                 className="signout-btn"
-                style={{ background: "rgba(255,255,255,0.18)" }}
+                style={{}}
                 onClick={() => setShowFeedback(true)}
               >
                 Feedback
@@ -1066,14 +1066,14 @@ export default function StaffDashboard({
             )}
             <button
               className="signout-btn"
-              style={{ background: "rgba(255,255,255,0.18)" }}
+              style={{}}
               onClick={() => setShowPrior(true)}
             >
               Prior Shifts
             </button>
             <button
               className="signout-btn"
-              style={{ background: "rgba(255,255,255,0.18)" }}
+              style={{}}
               onClick={onViewLogs}
             >
               Shift Logs

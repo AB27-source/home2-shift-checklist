@@ -33,7 +33,7 @@ export default function ThemePicker({ agentId }) {
     <div className={styles.wrap} ref={ref}>
       <button
         className="signout-btn"
-        style={{ background: 'rgba(255,255,255,0.18)', padding: '4px 8px', fontSize: 15 }}
+        style={{ padding: '4px 8px', fontSize: 15 }}
         onClick={() => setOpen(o => !o)}
         title="Change theme"
         aria-label="Change theme"
