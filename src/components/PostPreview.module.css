@@ -50,7 +50,7 @@
 
 .th {
   background: var(--brand);
-  color: #fff !important;
+  color: var(--topbar-text) !important;
   padding: 7px 11px;
   text-align: left;
   font-weight: 700;
@@ -80,9 +80,9 @@
 }
 
 /* Highlight last column (New Business Day) */
-.table thead tr th:last-child { background: #2d2d8e; }
+.table thead tr th:last-child { background: var(--brand-mid); }
 .table tbody tr td:last-child {
-  background: #f0f4ff !important;
+  background: var(--brand-light) !important;
   font-weight: 700;
   color: var(--brand);
 }
