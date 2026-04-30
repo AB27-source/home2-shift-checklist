@@ -33,6 +33,7 @@ import PriorShifts from "./PriorShifts";
 import PreviousShiftLogs from "./PreviousShiftLogs";
 import HotelSnapshot from "./HotelSnapshot";
 import FeedbackModal from "./FeedbackModal";
+import ThemePicker from "./ThemePicker";
 import styles from "./StaffDashboard.module.css";
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -1053,6 +1054,7 @@ export default function StaffDashboard({
                 ← Dashboard
               </button>
             )}
+            <ThemePicker agentId={agent.id} />
             {agent.is_super_admin && (
               <button
                 className="signout-btn"

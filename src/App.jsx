@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 import { Analytics } from '@vercel/analytics/react'
 import { getAgents, getHandoff, getShiftTasks, restoreAgentSession, signOutAgentSession, isAppSessionError } from './lib/supabase'
+import { loadSavedTheme } from './lib/theme'
 import { SHIFTS } from './data/shifts'
 import LoginScreen     from './components/LoginScreen'
 import PinScreen       from './components/PinScreen'
@@ -62,6 +63,7 @@ export default function App() {
           if (cachedSession?.sessionToken) {
             const restoredAgent = await restoreAgentSession(cachedSession.sessionToken)
             if (restoredAgent) {
+              loadSavedTheme(restoredAgent.id)
               setCurrentAgent(restoredAgent)
               setSessionToken(cachedSession.sessionToken)
               try {
@@ -119,6 +121,7 @@ export default function App() {
         sessionToken: nextSessionToken,
       }))
     } catch(e) {}
+    loadSavedTheme(agent.id)
     setCurrentAgent(agent)
     setSessionToken(nextSessionToken)
     setScreen(agent.is_admin ? 'manager' : 'home')

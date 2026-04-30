@@ -10,6 +10,7 @@ import ShiftLogBrowser   from '../ShiftLogBrowser'
 import HotelSnapshot     from './HotelSnapshot'
 import RateShopSnapshot  from './RateShopSnapshot'
 import RateShopHistory   from './RateShopHistory'
+import ThemePicker from '../ThemePicker'
 import styles from './Dashboard.module.css'
 
 export default function Dashboard({ agent, agents, sessionToken, onSignOut, showToast, onAgentsChange, handoff, onHandoffUpdate, shiftTasks, onShiftTasksChange, onLogShift }) {
@@ -97,6 +98,7 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
         <div className="topbar-right">
           <div className="topbar-agent-badge" style={{ background: 'rgba(255,200,100,0.25)' }}>⭐ Manager</div>
           <button className="signout-btn" style={{ background: 'rgba(255,255,255,0.18)' }} onClick={onLogShift}>Log a Shift</button>
+          <ThemePicker agentId={agent?.id} />
           {agent?.is_super_admin && <button className="signout-btn" style={{ background: 'rgba(255,255,255,0.18)' }} onClick={() => setShowFeedback(true)}>Feedback</button>}
           <button className="signout-btn" onClick={onSignOut}>Sign out</button>
         </div>
