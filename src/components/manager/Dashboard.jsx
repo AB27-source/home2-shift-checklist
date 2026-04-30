@@ -254,6 +254,7 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
           {tab === 'agents' && (
             <AgentManager
               agents={agents}
+              currentAgent={agent}
               sessionToken={sessionToken}
               onAgentsChange={onAgentsChange}
               showToast={showToast}

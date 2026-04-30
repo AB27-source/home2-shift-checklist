@@ -30,7 +30,9 @@ function getSaveErrorMessage(error, fallback = 'Failed to save. Try again.') {
   return error?.message || fallback
 }
 
-export default function AgentManager({ agents, sessionToken, onAgentsChange, showToast }) {
+export default function AgentManager({ agents, currentAgent, sessionToken, onAgentsChange, showToast }) {
+  // General Managers can only reset their own PIN or non-admin staff PINs; cannot remove admins
+  const isGM = currentAgent?.role === 'General Manager' && !currentAgent?.is_super_admin
   const [modal, setModal] = useState(null)
 
   const admins = agents.filter(a => a.is_admin)
@@ -83,6 +85,10 @@ export default function AgentManager({ agents, sessionToken, onAgentsChange, sho
   function AgentCard({ agent }) {
     const isAdmin      = agent.is_admin
     const isSuperAdmin = agent.is_super_admin
+    const isSelf       = agent.id === currentAgent?.id
+    // GMs cannot remove other admins or reset other admins' PINs
+    const canRemove    = !isGM || !isAdmin
+    const canResetPin  = !isGM || !isAdmin || isSelf
     return (
       <div className={`${styles.card} ${isAdmin ? styles.adminCard : ''} ${isSuperAdmin ? styles.superAdminCard : ''}`}>
         <div className={styles.cardTop}>
@@ -105,9 +111,9 @@ export default function AgentManager({ agents, sessionToken, onAgentsChange, sho
             <span className={styles.protectedNote}>Protected account</span>
           ) : (
             <>
-              <button className="btn-sm" onClick={() => setModal({ type: 'edit', agent })}>Edit</button>
-              <button className="btn-sm" onClick={() => setModal({ type: 'pin', agent })}>Reset PIN</button>
-              <button className="btn-sm danger" onClick={() => handleRemove(agent)}>Remove</button>
+              {!isGM && <button className="btn-sm" onClick={() => setModal({ type: 'edit', agent })}>Edit</button>}
+              {canResetPin && <button className="btn-sm" onClick={() => setModal({ type: 'pin', agent })}>Reset PIN</button>}
+              {canRemove && <button className="btn-sm danger" onClick={() => handleRemove(agent)}>Remove</button>}
             </>
           )}
         </div>
@@ -125,9 +131,11 @@ export default function AgentManager({ agents, sessionToken, onAgentsChange, sho
         </div>
         <div className={styles.grid}>
           {admins.map(a => <AgentCard key={a.id} agent={a} />)}
-          <button className={`${styles.addBtn} ${styles.addAdminBtn}`} onClick={() => setModal({ type: 'add', isAdmin: true })}>
-            + Add admin account
-          </button>
+          {!isGM && (
+            <button className={`${styles.addBtn} ${styles.addAdminBtn}`} onClick={() => setModal({ type: 'add', isAdmin: true })}>
+              + Add admin account
+            </button>
+          )}
         </div>
       </div>
 
