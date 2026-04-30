@@ -52,11 +52,12 @@ export function applyTheme({ brand, mid, light }) {
 const storageKey = (id) => `home2_theme_${id}`
 
 export function loadSavedTheme(agentId) {
-  if (!agentId) return
   try {
-    const saved = localStorage.getItem(storageKey(agentId))
-    if (saved) applyTheme(JSON.parse(saved))
-  } catch {}
+    const saved = agentId ? localStorage.getItem(storageKey(agentId)) : null
+    applyTheme(saved ? JSON.parse(saved) : THEMES[0])
+  } catch {
+    applyTheme(THEMES[0])
+  }
 }
 
 export function saveTheme(agentId, theme) {

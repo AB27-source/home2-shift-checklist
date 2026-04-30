@@ -52,6 +52,9 @@ export default function App() {
     }
   }, [])
 
+  // On mount: apply default theme immediately so the login screen is styled correctly
+  useEffect(() => { loadSavedTheme(null) }, [])
+
   // On mount: load data, then check if an agent was already logged in
   useEffect(() => {
     loadInitialData().then(async (result) => {
