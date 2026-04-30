@@ -1,12 +1,12 @@
 export const THEMES = [
-  { id: 'navy',   label: 'Navy',   brand: '#1B1B6B', mid: '#5557a8', light: '#eeeef8' },
-  { id: 'indigo', label: 'Indigo', brand: '#3730a3', mid: '#6366f1', light: '#eef2ff' },
-  { id: 'blue',   label: 'Blue',   brand: '#1e40af', mid: '#3b82f6', light: '#eff6ff' },
-  { id: 'teal',   label: 'Teal',   brand: '#0f766e', mid: '#14b8a6', light: '#f0fdfa' },
-  { id: 'green',  label: 'Green',  brand: '#166534', mid: '#16a34a', light: '#f0fdf4' },
-  { id: 'purple', label: 'Purple', brand: '#6b21a8', mid: '#9333ea', light: '#faf5ff' },
-  { id: 'rose',   label: 'Rose',   brand: '#9f1239', mid: '#e11d48', light: '#fff1f2' },
-  { id: 'slate',  label: 'Slate',  brand: '#1e293b', mid: '#64748b', light: '#f8fafc' },
+  { id: 'dracula-bg',     label: 'Background', brand: '#282A36', mid: '#6272a4', light: '#eeeef8' },
+  { id: 'dracula-red',    label: 'Red',        brand: '#FF5555', mid: '#ff9090', light: '#fff0f0' },
+  { id: 'dracula-orange', label: 'Orange',     brand: '#FFB86C', mid: '#c47a0a', light: '#fff7ee' },
+  { id: 'dracula-yellow', label: 'Yellow',     brand: '#F1FA8C', mid: '#8a9e00', light: '#fafde8' },
+  { id: 'dracula-green',  label: 'Green',      brand: '#50FA7B', mid: '#00a832', light: '#eafff1' },
+  { id: 'dracula-cyan',   label: 'Cyan',       brand: '#8BE9FD', mid: '#0088bb', light: '#e8f9ff' },
+  { id: 'dracula-purple', label: 'Purple',     brand: '#BD93F9', mid: '#7c3aed', light: '#f3edff' },
+  { id: 'dracula-pink',   label: 'Pink',       brand: '#FF79C6', mid: '#cc0080', light: '#ffe8f5' },
 ]
 
 function hexToRgb(hex) {
