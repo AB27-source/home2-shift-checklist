@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { saveFeedback, uploadAttachment, deleteAttachment } from '../lib/supabase'
 import { postShiftLogToTeams } from '../lib/teamsClient'
 import styles from './FeedbackModal.module.css'
@@ -85,7 +86,7 @@ export default function FeedbackModal({ agent, onClose }) {
     }
   }
 
-  if (done) return (
+  if (done) return createPortal(
     <div className={styles.overlay}>
       <div className={`modal ${styles.modal}`}>
         <div className={styles.doneIcon}>✅</div>
@@ -97,10 +98,11 @@ export default function FeedbackModal({ agent, onClose }) {
           <button className="btn btn-primary" style={{ flex: 1 }} onClick={onClose}>Close</button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 
-  return (
+  return createPortal(
     <div className={styles.overlay}>
       <div className={`modal ${styles.modal}`}>
         <div className="modal-title">💬 Share Feedback</div>
@@ -173,6 +175,7 @@ export default function FeedbackModal({ agent, onClose }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
