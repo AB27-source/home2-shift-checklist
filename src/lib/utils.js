@@ -116,7 +116,8 @@ export function parseNightAuditFromPostText(text) {
     na_gtd_noshow:  get('GTD No-Show'),
     na_cancel_ct:   get('Cancellations'),
     na_cancel_detail: getBullets('Cancellations'),
-    na_rate_adj:    get('Rate Adj/Refunds'),
+    na_rate_adj:         get('Rate Adj/Refunds'),
+    na_rate_adj_detail:  getBullets('Rate Adj / Refund Details'),
     na_guest_req:        get('Guest Requests'),
     na_guest_req_detail: getBullets('Guest Request Details'),
     na_maint_ct:    get('Maintenance Pass'),
@@ -179,6 +180,7 @@ export function parseMetaFromPostText(text) {
     guest_req:        get('Guest Requests', 'Guest Request'),
     guest_req_detail: getBullets('Guest Request Details') || get('Guest Request Details'),
     refunds:          get('Rate Adjustments / Refunds', 'Rate Adjustments/Refunds'),
+    refunds_detail:   getBullets('Rate Adj / Refund Details'),
     maint_passdown:   getBullets('Maintenance / Passdown') || get('Maintenance / Passdown'),
     handoff_note:     get('Handoff Note'),
   }
@@ -283,6 +285,7 @@ function buildLegacyNightAuditPreview(text) {
   pushBulletSection(lines, 'Out of Order Room Details', parsed.na_ooo_detail)
   pushBulletSection(lines, 'Cancellations', parsed.na_cancel_detail)
   pushBulletSection(lines, 'Guest Request Details', parsed.na_guest_req_detail)
+  pushBulletSection(lines, 'Rate Adj / Refund Details', parsed.na_rate_adj_detail)
   pushBulletSection(lines, 'Maintenance Pass', parsed.na_maint_detail)
 
   ;[

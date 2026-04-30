@@ -201,7 +201,7 @@ function computeFormDiff(origMeta, newMeta, origTaskState, newTaskState, tasks) 
   const changes = []
   const metaLabels = {
     occ: 'Occupancy', adr: 'ADR', declined: 'Declined Payments',
-    ooo: 'OOO Rooms', guest_req: 'Guest Requests', refunds: 'Rate Adj/Refunds',
+    ooo: 'OOO Rooms', guest_req: 'Guest Requests', refunds: 'Rate Adj/Refunds', refunds_detail: 'Rate Adj/Refund Details',
     pending: 'Pending Arrivals', arrivals: "Today's Arrivals", departures: 'Departures',
     handoff_note: 'Handoff Note', manager_notes: 'Notes to Manager',
     ooo_detail: 'OOO Details', guest_req_detail: 'Guest Request Details',
@@ -214,7 +214,7 @@ function computeFormDiff(origMeta, newMeta, origTaskState, newTaskState, tasks) 
     na_high_bal: 'High Balances', na_callouts: 'Call Outs',
     na_declined: 'Declined Payments', na_cancel_detail: 'Cancellation Details',
     na_maint_detail: 'Maintenance Details', na_guest_req_detail: 'Guest Request Details',
-    na_ooo_detail: 'OOO Details',
+    na_ooo_detail: 'OOO Details', na_rate_adj_detail: 'Rate Adj/Refund Details',
   }
   Object.keys(metaLabels).forEach(key => {
     const orig = String(origMeta[key] ?? '').trim()
@@ -478,6 +478,7 @@ export default function StaffDashboard({
         guest_req: parsed.guest_req || "",
         guest_req_detail: parsed.guest_req_detail || "",
         refunds: parsed.refunds || "",
+        refunds_detail: parsed.refunds_detail || "",
         maint_passdown: parsed.maint_passdown || "",
       });
     }
@@ -738,6 +739,13 @@ export default function StaffDashboard({
         post += `- ${l}\n`;
       });
     }
+    const rateAdjLines = splitLines(meta.na_rate_adj_detail);
+    if (rateAdjLines.length) {
+      post += "\n**Rate Adj / Refund Details:**\n";
+      rateAdjLines.forEach((l) => {
+        post += `- ${l}\n`;
+      });
+    }
     if (hasDisplayValue(meta.na_comments))
       post += `\n**General Comments:** ${formatInlineValue(meta.na_comments)}\n`;
     if (hasDisplayValue(meta.na_guest_issues))
@@ -819,6 +827,13 @@ export default function StaffDashboard({
     if (guestReqLines.length) {
       post += "\n**Guest Request Details:**\n";
       guestReqLines.forEach((l) => {
+        post += `- ${l}\n`;
+      });
+    }
+    const refundsLines = splitLines(meta.refunds_detail);
+    if (refundsLines.length) {
+      post += "\n**Rate Adj / Refund Details:**\n";
+      refundsLines.forEach((l) => {
         post += `- ${l}\n`;
       });
     }

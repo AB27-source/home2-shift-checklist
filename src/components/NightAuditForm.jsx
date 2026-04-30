@@ -15,10 +15,11 @@ export default function NightAuditForm({ meta, onMetaChange }) {
   const f  = (key)  => meta[key] || ''
   const ch = (key)  => (e) => onMetaChange(key, e.target.value)
 
-  const cancelCt        = parseInt(meta.na_cancel_ct) || 0
-  const maintCt         = parseInt(meta.na_maint_ct)  || 0
-  const outOfOrderCount = parseInt(meta.na_ooo)        || 0
-  const guestReqCount   = parseInt(meta.na_guest_req)  || 0
+  const cancelCt        = parseInt(meta.na_cancel_ct)  || 0
+  const maintCt         = parseInt(meta.na_maint_ct)   || 0
+  const outOfOrderCount = parseInt(meta.na_ooo)         || 0
+  const guestReqCount   = parseInt(meta.na_guest_req)   || 0
+  const rateAdjCount    = parseInt(meta.na_rate_adj)    || 0
 
   return (
     <div className={styles.wrap}>
@@ -114,6 +115,19 @@ export default function NightAuditForm({ meta, onMetaChange }) {
               placeholder={"Late checkout request\nExtra towels delivered\nRoom move requested"}
               value={f('na_guest_req_detail')}
               onChange={ch('na_guest_req_detail')}
+            />
+          </div>
+        )}
+
+        {rateAdjCount > 1 && (
+          <div className="field">
+            <label>Rate Adj / Refund Details</label>
+            <textarea
+              className={styles.textarea}
+              rows={Math.max(3, rateAdjCount)}
+              placeholder={"Room 205: Rate corrected from $189 to $159 — manager approved\nGuest 3412: $25 refund for noise complaint"}
+              value={f('na_rate_adj_detail')}
+              onChange={ch('na_rate_adj_detail')}
             />
           </div>
         )}

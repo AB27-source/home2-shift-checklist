@@ -6,6 +6,7 @@ export default function RegularShiftForm({ meta, onMetaChange, shiftLabel }) {
 
   const outOfOrderCount = parseInt(meta.ooo) || 0
   const guestReqCount = parseInt(meta.guest_req) || 0
+  const refundCount = parseInt(meta.refunds) || 0
   const handoffTarget = shiftLabel === 'Morning Shift' ? 'Swing Shift' : 'Night Audit'
 
   return (
@@ -97,6 +98,20 @@ export default function RegularShiftForm({ meta, onMetaChange, shiftLabel }) {
               placeholder={"Room 415: A/C Thermostat not working\nRoom 111: Barn door stuck"}
               value={f('ooo_detail')}
               onChange={ch('ooo_detail')}
+            />
+          </div>
+        )}
+
+        {/* Rate adj / refund detail — expands when count > 1 */}
+        {refundCount > 1 && (
+          <div className={`field ${styles.guestDetail}`}>
+            <label>Rate Adj / Refund Details</label>
+            <textarea
+              className={styles.textarea}
+              rows={Math.max(3, refundCount)}
+              placeholder={"Room 205: Rate corrected from $189 to $159 — manager approved\nGuest 3412: $25 refund for noise complaint"}
+              value={f('refunds_detail')}
+              onChange={ch('refunds_detail')}
             />
           </div>
         )}
