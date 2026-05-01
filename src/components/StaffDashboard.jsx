@@ -1081,15 +1081,13 @@ export default function StaffDashboard({
               </button>
             )}
             <ThemePicker agentId={agent.id} />
-            {agent.is_super_admin && (
-              <button
-                className="signout-btn"
-                style={{}}
-                onClick={() => setShowFeedback(true)}
-              >
-                Feedback
-              </button>
-            )}
+            <button
+              className="signout-btn"
+              style={{}}
+              onClick={() => setShowFeedback(true)}
+            >
+              Feedback
+            </button>
             <button
               className="signout-btn"
               style={{}}
