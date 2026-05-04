@@ -95,6 +95,17 @@ export default function PostPreview({ text }) {
       )
       continue
 
+    // ── QOTD|quote text|author ──
+    } else if (line.startsWith('QOTD|')) {
+      const [, quoteText, author] = line.split('|')
+      nodes.push(
+        <div key={i} className={styles.quoteBlock}>
+          <div className={styles.quoteLabel}>💬 Quote of the Day</div>
+          <div className={styles.quoteText}>"{quoteText}"</div>
+          {author && <div className={styles.quoteAuthor}>– {author}</div>}
+        </div>
+      )
+
     // ── **Bold label line** (e.g. **Guest Request Details:**) ──
     } else if (/^\*\*[^*]+\*\*:?\s*$/.test(line)) {
       nodes.push(<p key={i} className={styles.boldLabel}>{renderInline(line)}</p>)

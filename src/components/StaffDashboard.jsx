@@ -742,7 +742,10 @@ export default function StaffDashboard({
     const naVersionSuffix = version ? ` (v${version})` : '';
     const naAgentName = adminEditRecord ? adminEditRecord.agent_name : agent.name;
     const naEditedBy = adminEditRecord ? `\n**Edited by:** ${agent.name}` : '';
-    let post = `## 🌙 Night Audit Shift Log — ${fmtDate(meta.date)}${naVersionSuffix}\n**Front Desk Agent:** ${naAgentName}${naEditedBy}\n\n---\n`;
+    const naQuoteToken = hasDisplayValue(meta.na_quote)
+      ? `\nQOTD|${meta.na_quote.trim()}|${(meta.na_quote_author || '').trim()}`
+      : '';
+    let post = `## 🌙 Night Audit Shift Log — ${fmtDate(meta.date)}${naVersionSuffix}\n**Front Desk Agent:** ${naAgentName}${naEditedBy}${naQuoteToken}\n\n---\n`;
     post +=
       "\n### 📊 Hotel Statistics\n| Metric | Start Shift | Ending Day | **New Business Day** |\n|--------|-------------|------------|---------------------|\n";
     const fmtVal = (v, suffix) => v && v !== '—' ? `${v}${suffix || ''}` : v
@@ -872,10 +875,6 @@ export default function StaffDashboard({
       attachments.forEach((f) => {
         post += `- ${attachmentIcon(f.name)} [${f.name}](${f.url})\n`;
       });
-    }
-    if (hasDisplayValue(meta.na_quote)) {
-      const author = hasDisplayValue(meta.na_quote_author) ? `\n> – *${meta.na_quote_author.trim()}*` : '';
-      post += `\n### 💬 Quote of the Day\n> *"${meta.na_quote.trim()}"*${author}\n`;
     }
     return post;
   }

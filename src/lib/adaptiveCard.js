@@ -161,6 +161,48 @@ export function buildCardBody(postText) {
       continue
     }
 
+    // ── QOTD|quote text|author ─────────────────────────────────────────────
+    if (line.startsWith('QOTD|')) {
+      const [, quoteText, author] = line.split('|')
+      const quoteItems = [
+        {
+          type: 'TextBlock',
+          text: '💬 QUOTE OF THE DAY',
+          weight: 'Bolder',
+          size: 'Small',
+          color: 'Accent',
+          spacing: 'None',
+        },
+        {
+          type: 'TextBlock',
+          text: `"${quoteText}"`,
+          wrap: true,
+          isSubtle: false,
+          italic: true,
+          spacing: 'Small',
+        },
+      ]
+      if (author) {
+        quoteItems.push({
+          type: 'TextBlock',
+          text: `– ${author}`,
+          wrap: true,
+          isSubtle: true,
+          weight: 'Bolder',
+          size: 'Small',
+          spacing: 'Small',
+        })
+      }
+      body.push({
+        type: 'Container',
+        style: 'emphasis',
+        spacing: 'Medium',
+        items: quoteItems,
+      })
+      i++
+      continue
+    }
+
     // ── **Bold-only label line** e.g. "**Guest Request Details:**" ─────────
     if (/^\*\*[^*]+\*\*:?\s*$/.test(line)) {
       body.push({
