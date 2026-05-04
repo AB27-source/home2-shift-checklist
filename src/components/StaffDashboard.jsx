@@ -217,6 +217,7 @@ function computeFormDiff(origMeta, newMeta, origTaskState, newTaskState, tasks) 
     na_declined: 'Declined Payments', na_cancel_detail: 'Cancellation Details',
     na_maint_detail: 'Maintenance Details', na_guest_req_detail: 'Guest Request Details',
     na_ooo_detail: 'OOO Details', na_rate_adj_detail: 'Rate Adj/Refund Details',
+    na_quote: 'Quote of the Day', na_quote_author: 'Quote Author',
   }
   Object.keys(metaLabels).forEach(key => {
     const orig = String(origMeta[key] ?? '').trim()
@@ -871,6 +872,10 @@ export default function StaffDashboard({
       attachments.forEach((f) => {
         post += `- ${attachmentIcon(f.name)} [${f.name}](${f.url})\n`;
       });
+    }
+    if (hasDisplayValue(meta.na_quote)) {
+      const author = hasDisplayValue(meta.na_quote_author) ? `\n> – *${meta.na_quote_author.trim()}*` : '';
+      post += `\n### 💬 Quote of the Day\n> *"${meta.na_quote.trim()}"*${author}\n`;
     }
     return post;
   }

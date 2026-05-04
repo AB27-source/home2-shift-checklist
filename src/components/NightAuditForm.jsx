@@ -263,6 +263,45 @@ export default function NightAuditForm({ meta, onMetaChange }) {
         </div>
       </div>
 
+      {/* ── Quote of the Day ── */}
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+            <path d="M2 4.5C2 3.12 3.12 2 4.5 2H5v1.5H4.5a1 1 0 00-1 1V5H5v3.5H2V4.5zM7.5 4.5C7.5 3.12 8.62 2 10 2h.5v1.5H10a1 1 0 00-1 1V5h1.5v3.5H7.5V4.5z" fill="currentColor"/>
+          </svg>
+          Quote of the Day
+        </div>
+        <div className="field">
+          <label>Quote</label>
+          <textarea
+            className={styles.textarea}
+            rows={2}
+            placeholder="Enter an inspirational quote…"
+            value={f('na_quote')}
+            onChange={ch('na_quote')}
+          />
+        </div>
+        <div className="field">
+          <label>Author</label>
+          <input
+            type="text"
+            placeholder="— Author Name"
+            value={f('na_quote_author')}
+            onChange={ch('na_quote_author')}
+          />
+        </div>
+        {f('na_quote') && (
+          <div className={styles.quotePreview}>
+            <span className={styles.quoteMarks}>"</span>
+            {f('na_quote')}
+            <span className={styles.quoteMarks}>"</span>
+            {f('na_quote_author') && (
+              <div className={styles.quoteAuthor}>– {f('na_quote_author')}</div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* ── Notes & Handoff ── */}
       <div className={styles.section}>
         <div className={styles.sectionTitle}>
