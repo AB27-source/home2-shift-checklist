@@ -29,6 +29,17 @@ function fmtDate(str) {
 
 function today() { return new Date().toISOString().split('T')[0] }
 
+function fmtShortDate(str) {
+  if (!str) return ''
+  const todayStr = today()
+  if (str === todayStr) return 'Today'
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1)
+  if (str === yesterday.toISOString().split('T')[0]) return 'Yesterday'
+  const [, mo, d] = str.split('-')
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+  return `${months[parseInt(mo)-1]} ${parseInt(d)}`
+}
+
 function CellValue({ entry }) {
   if (!entry) return <span className={styles.cellEmpty}>—</span>
   if (entry.soldOut) return (
@@ -173,7 +184,7 @@ export default function RateShopSnapshot({ records }) {
                       <CellValue entry={cell} />
                       {cell?._entry && (
                         <span className={`${styles.cellFrom} ${cell._entry.isLive ? styles.cellFromLive : ''}`}>
-                          {cell._entry.isLive ? '● Live · ' : ''}{cell._entry.shift.replace(' Shift','').replace('Night Audit','Night')} · {fmtTime(cell._entry.ts)}
+                          {cell._entry.isLive ? '● Live · ' : ''}{cell._entry.shift.replace(' Shift','').replace('Night Audit','Night')} · {fmtShortDate(cell._entry.date)} · {fmtTime(cell._entry.ts)}
                         </span>
                       )}
                     </td>
