@@ -42,12 +42,18 @@ export default function ThemePicker({ agentId }) {
     <div className={styles.wrap} ref={ref}>
       <button
         className="signout-btn"
-        style={{ padding: '4px 8px', fontSize: 15 }}
         onClick={() => setOpen(o => !o)}
         title="Change theme"
         aria-label="Change theme"
       >
-        🎨
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style={{ marginRight: 4, verticalAlign: 'middle' }}>
+          <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.3"/>
+          <circle cx="4.5" cy="6" r="1" fill="currentColor"/>
+          <circle cx="7" cy="4.5" r="1" fill="currentColor"/>
+          <circle cx="9.5" cy="6" r="1" fill="currentColor"/>
+          <path d="M5.5 9.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/>
+        </svg>
+        Theme
       </button>
       {open && (
         <div className={styles.popover}>

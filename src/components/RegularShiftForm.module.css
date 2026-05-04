@@ -69,3 +69,21 @@
   grid-column: 1 / -1;
   margin-top: 2px;
 }
+
+/* Prefix / suffix symbol inside an input */
+.inputWrap {
+  position: relative;
+}
+
+.inputSymbol {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: var(--text-muted, #999);
+  pointer-events: none;
+  user-select: none;
+}
+
+.inputSymbolLeft  { left: 10px; }
+.inputSymbolRight { right: 10px; }

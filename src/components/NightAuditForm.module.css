@@ -142,6 +142,29 @@
   background: var(--white);
 }
 
+/* Prefix / suffix symbol wrapper for table cells */
+.cellWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-left: 1px solid var(--border);
+}
+
+.cellWrap .tableInput {
+  border-left: none;
+  flex: 1;
+  min-width: 0;
+}
+
+.cellSymbol {
+  font-size: 11px;
+  color: var(--text-muted, #999);
+  pointer-events: none;
+  user-select: none;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
 /* ── Responsive: tighter label on mobile ── */
 @media (max-width: 520px) {
   .tableHead,

@@ -1,19 +1,23 @@
 import styles from './NightAuditForm.module.css'
 
 const NA_TABLE_ROWS = [
-  { key: 'occ',    label: 'Occupancy',         placeholder: 'e.g. 86.81%' },
-  { key: 'adr',    label: 'ADR',               placeholder: 'e.g. 158.00' },
-  { key: 'revpar', label: 'RevPAR',            placeholder: 'e.g. 137.27' },
-  { key: 'dep',    label: "Today's Departures", placeholder: '—' },
-  { key: 'arr',    label: "Today's Arrivals",   placeholder: '—' },
-  { key: 'pend',   label: 'Pending Arrivals',   placeholder: '—' },
-  { key: 'avail',  label: 'Available Rooms',    placeholder: '—' },
-  { key: 'walkin', label: 'Walk-In',            placeholder: '—' },
+  { key: 'occ',    label: 'Occupancy (%)',      placeholder: 'e.g. 86.81',  strip: '%' },
+  { key: 'adr',    label: 'ADR ($)',            placeholder: 'e.g. 158.00', strip: '$' },
+  { key: 'revpar', label: 'RevPAR',            placeholder: 'e.g. 137.27', type: 'decimal' },
+  { key: 'dep',    label: "Today's Departures", placeholder: '—',           type: 'int' },
+  { key: 'arr',    label: "Today's Arrivals",   placeholder: '—',           type: 'int' },
+  { key: 'pend',   label: 'Pending Arrivals',   placeholder: '—',           type: 'int' },
+  { key: 'avail',  label: 'Available Rooms',    placeholder: '—',           type: 'int' },
+  { key: 'walkin', label: 'Walk-In',            placeholder: '—',           type: 'int' },
 ]
 
 export default function NightAuditForm({ meta, onMetaChange }) {
   const f  = (key)  => meta[key] || ''
   const ch = (key)  => (e) => onMetaChange(key, e.target.value)
+  const chStrip   = (key, char) => (e) => onMetaChange(key, e.target.value.split(char).join(''))
+  const chNumeric = (key)       => (e) => onMetaChange(key, e.target.value.replace(/[^0-9.]/g, ''))
+  const chInt     = (key)       => (e) => onMetaChange(key, e.target.value.replace(/[^0-9]/g, ''))
+  const chFilter  = (key, re)   => (e) => onMetaChange(key, e.target.value.replace(re, ''))
 
   const cancelCt        = parseInt(meta.na_cancel_ct)  || 0
   const maintCt         = parseInt(meta.na_maint_ct)   || 0
@@ -53,16 +57,24 @@ export default function NightAuditForm({ meta, onMetaChange }) {
           {NA_TABLE_ROWS.map(row => (
             <div key={row.key} className={styles.tableRow}>
               <div className={styles.rowLabel}>{row.label}</div>
-              {['s', 'e', 'n'].map(col => (
-                <input
-                  key={col}
-                  className={`${styles.tableInput}${col === 'n' ? ' ' + styles.newInput : ''}`}
-                  type="text"
-                  placeholder={row.placeholder}
-                  value={f(`na_${row.key}_${col}`)}
-                  onChange={ch(`na_${row.key}_${col}`)}
-                />
-              ))}
+              {['s', 'e', 'n'].map(col => {
+                const key = `na_${row.key}_${col}`
+                const isNew = col === 'n'
+                const inputCls = `${styles.tableInput}${isNew ? ' ' + styles.newInput : ''}`
+                if (!row.strip) return (
+                  <input key={col} className={inputCls} type="text" placeholder={row.placeholder} value={f(key)}
+                    onChange={row.type === 'decimal' ? chNumeric(key) : row.type === 'int' ? chInt(key) : ch(key)}
+                  />
+                )
+                const isPrefix = row.strip === '$'
+                return (
+                  <div key={col} className={styles.cellWrap}>
+                    {isPrefix && <span className={styles.cellSymbol}>{row.strip}</span>}
+                    <input className={inputCls} type="text" placeholder={row.placeholder} value={f(key)} onChange={row.key === 'adr' ? chNumeric(key) : chFilter(key, /[^0-9.]/g)} />
+                    {!isPrefix && <span className={styles.cellSymbol}>{row.strip}</span>}
+                  </div>
+                )
+              })}
             </div>
           ))}
         </div>
@@ -82,27 +94,27 @@ export default function NightAuditForm({ meta, onMetaChange }) {
         <div className={styles.actGrid}>
           <div className="field">
             <label>Declined Payments</label>
-            <input type="number" min="0" placeholder="0" value={f('na_declined')} onChange={ch('na_declined')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('na_declined')} onChange={chInt('na_declined')} />
           </div>
           <div className="field">
             <label>Out of Order Room Count</label>
-            <input type="number" min="0" placeholder="0" value={f('na_ooo')} onChange={ch('na_ooo')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('na_ooo')} onChange={chInt('na_ooo')} />
           </div>
           <div className="field">
             <label>Walk-in Reservations</label>
-            <input type="number" min="0" placeholder="0" value={f('na_walkin_res')} onChange={ch('na_walkin_res')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('na_walkin_res')} onChange={chInt('na_walkin_res')} />
           </div>
           <div className="field">
             <label>GTD No-Show</label>
-            <input type="number" min="0" placeholder="0" value={f('na_gtd_noshow')} onChange={ch('na_gtd_noshow')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('na_gtd_noshow')} onChange={chInt('na_gtd_noshow')} />
           </div>
           <div className="field">
             <label>Rate Adj / Refunds</label>
-            <input type="number" min="0" placeholder="0" value={f('na_rate_adj')} onChange={ch('na_rate_adj')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('na_rate_adj')} onChange={chInt('na_rate_adj')} />
           </div>
           <div className="field">
             <label>Guest Requests</label>
-            <input type="number" min="0" placeholder="0" value={f('na_guest_req')} onChange={ch('na_guest_req')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('na_guest_req')} onChange={chInt('na_guest_req')} />
           </div>
         </div>
 
@@ -149,7 +161,7 @@ export default function NightAuditForm({ meta, onMetaChange }) {
         <div className={styles.countGroup}>
           <div className={`field ${styles.countField}`}>
             <label>Cancellations</label>
-            <input type="number" min="0" placeholder="0" value={f('na_cancel_ct')} onChange={ch('na_cancel_ct')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('na_cancel_ct')} onChange={chInt('na_cancel_ct')} />
           </div>
           {cancelCt > 0 && (
             <div className={`field ${styles.detailField}`}>
@@ -169,7 +181,7 @@ export default function NightAuditForm({ meta, onMetaChange }) {
         <div className={styles.countGroup}>
           <div className={`field ${styles.countField}`}>
             <label>Maintenance Pass</label>
-            <input type="number" min="0" placeholder="0" value={f('na_maint_ct')} onChange={ch('na_maint_ct')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('na_maint_ct')} onChange={chInt('na_maint_ct')} />
           </div>
           {maintCt > 0 && (
             <div className={`field ${styles.detailField}`}>

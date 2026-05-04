@@ -24,7 +24,7 @@ function fmtTime(iso) {
  *   onVarianceAlert(alerts) – called when a rate exceeds the variance threshold
  *                             alerts: [{ hotel, period, startRate, newRate }]
  */
-export default function RateShopSection({ shiftKey, rateShops, onChange, onVarianceAlert, varianceThreshold }) {
+export default function RateShopSection({ shiftKey, rateShops, onChange, onVarianceAlert, varianceThreshold, adminOverride }) {
   const threshold = varianceThreshold ?? VARIANCE_THRESHOLD
   const [status, setStatus] = useState(() => getWindowStatus(shiftKey))
 
@@ -83,7 +83,9 @@ export default function RateShopSection({ shiftKey, rateShops, onChange, onVaria
     }
   }
 
-  const { active, message } = status
+  const { active, message } = adminOverride
+    ? { active: '__all__', message: null }
+    : status
 
   return (
     <div className={styles.section}>
@@ -98,7 +100,7 @@ export default function RateShopSection({ shiftKey, rateShops, onChange, onVaria
         </div>
         <div className={`${styles.statusPill} ${active ? styles.pillActive : styles.pillClosed}`}>
           <span className={styles.pillDot} />
-          {active ? `${PERIOD_LABELS[active]} open` : 'Window closed'}
+          {active === '__all__' ? 'All windows open' : active ? `${PERIOD_LABELS[active]} open` : 'Window closed'}
         </div>
       </div>
 
@@ -135,7 +137,7 @@ export default function RateShopSection({ shiftKey, rateShops, onChange, onVaria
 
             <div className={styles.rateGrid}>
               {PERIODS.map(period => {
-                const isActive = active === period
+                const isActive = active === '__all__' || active === period
                 const entry = rateShops[period]?.[hotel.id]
                 const hasValue = entry?.rate !== undefined && entry?.rate !== ''
                 const isVariant = (() => {

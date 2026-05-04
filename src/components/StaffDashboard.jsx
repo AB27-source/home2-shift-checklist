@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { getAdminEditRecord, clearAdminEditRecord } from "../lib/adminEditRecord";
+import { createPortal } from "react-dom";
 import { SHIFTS } from "../data/shifts";
 import {
   saveShiftRecord,
@@ -241,6 +243,60 @@ function computeFormDiff(origMeta, newMeta, origTaskState, newTaskState, tasks) 
   return changes
 }
 
+// ── Pre-populate form state from an existing record (for pendingEdit) ────────
+function buildEditStateFromRecord(r) {
+  const shiftKey =
+    Object.keys(SHIFTS).find((k) => SHIFTS[k].label === r.shift) ||
+    getShiftByTime();
+
+  const ts = {};
+  if (Array.isArray(r.tasks))
+    r.tasks.forEach((t) => {
+      ts[t.id] = { done: !!t.done, timestamp: t.timestamp || null, note: t.note || '' };
+    });
+
+  let meta;
+  if (isNightAuditPost(r.post_text || '')) {
+    const naParsed = parseNightAuditFromPostText(r.post_text || '');
+    meta = {
+      date: r.date || today(),
+      manager_notes: r.manager_notes || naParsed.manager_notes || '',
+      handoff_note: r.handoff_note || naParsed.handoff_note || '',
+      na_declined: r.declined_payments || naParsed.na_declined || '',
+      ...naParsed,
+    };
+  } else {
+    const parsed = parseMetaFromPostText(r.post_text || '');
+    meta = {
+      date: r.date || today(),
+      occ: r.occupancy || parsed.occ || '',
+      adr: r.adr || parsed.adr || '',
+      declined: r.declined_payments || parsed.declined || '',
+      manager_notes: r.manager_notes || '',
+      handoff_note: r.handoff_note || '',
+      pending: parsed.pending || '',
+      arrivals: parsed.arrivals || '',
+      departures: parsed.departures || '',
+      ooo: parsed.ooo || '',
+      ooo_detail: parsed.ooo_detail || '',
+      guest_req: parsed.guest_req || '',
+      guest_req_detail: parsed.guest_req_detail || '',
+      refunds: parsed.refunds || '',
+      refunds_detail: parsed.refunds_detail || '',
+      maint_passdown: parsed.maint_passdown || '',
+    };
+  }
+
+  return {
+    shiftKey,
+    meta,
+    taskState: ts,
+    rateShops: r.rate_shops || EMPTY_RATE_SHOPS(),
+    attachments: Array.isArray(r.attachments) ? r.attachments : [],
+    postVersion: (r.edit_history?.length || 0) + 2,
+  };
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function StaffDashboard({
   agent,
@@ -254,12 +310,20 @@ export default function StaffDashboard({
 }) {
   const sessionKey = SESSION_PREFIX + agent.id;
 
+  // Read the admin-edit record from the module-level singleton set by App.jsx.
+  // A plain JS variable (not React state) is immune to StrictMode's double-invocation
+  // of useState initializers — it stays set through both render passes and is only
+  // cleared on intentional navigation away (cancelEdit / onBackToDashboard).
+  const [adminEditRecord, setAdminEditRecord] = useState(() => getAdminEditRecord());
+  const aer = adminEditRecord; // short alias for initializers below
+
   // ── Dashboard / home-screen state ────────────────────────────────────────
   const [todayCoverage, setTodayCoverage] = useState([]);
   const [homeDataLoaded, setHomeDataLoaded] = useState(false);
-  const [windowStatus, setWindowStatus] = useState(() =>
-    getWindowStatus(getShiftByTime()),
-  );
+  const [windowStatus, setWindowStatus] = useState(() => {
+    const key = aer ? (Object.keys(SHIFTS).find(k => SHIFTS[k].label === aer.shift) || getShiftByTime()) : getShiftByTime();
+    return getWindowStatus(key);
+  });
   const [showPrior, setShowPrior] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
 
@@ -274,24 +338,27 @@ export default function StaffDashboard({
     if (handoffKey) sessionStorage.setItem(handoffKey, '1')
   }
 
+  // Pre-compute the full edit state from the admin-edit record (once, on mount)
+  const [_aerState] = useState(() => aer ? buildEditStateFromRecord(aer) : null);
+
   // ── Form open/close state ────────────────────────────────────────────────
-  const [formOpen, setFormOpen] = useState(false);
+  const [formOpen, setFormOpen] = useState(() => !!_aerState);
 
   // ── Shift form state (mirrors Checklist) ─────────────────────────────────
-  const [shift, setShift] = useState(getShiftByTime);
-  const [taskState, setTaskState] = useState({});
-  const [meta, setMeta] = useState({ date: today() });
-  const [rateShops, setRateShops] = useState(EMPTY_RATE_SHOPS);
-  const [attachments, setAttachments] = useState([]);
+  const [shift, setShift] = useState(() => _aerState?.shiftKey || getShiftByTime());
+  const [taskState, setTaskState] = useState(() => _aerState?.taskState || {});
+  const [meta, setMeta] = useState(() => _aerState?.meta || { date: today() });
+  const [rateShops, setRateShops] = useState(() => _aerState?.rateShops || EMPTY_RATE_SHOPS());
+  const [attachments, setAttachments] = useState(() => _aerState?.attachments || []);
   const [postText, setPostText] = useState("");
   const [showOutput, setShowOutput] = useState(false);
   const [postStatus, setPostStatus] = useState(null);
   const [posted, setPosted] = useState(false);
   const [choiceRecords, setChoiceRecords] = useState(null);
-  const [editRecordId, setEditRecordId] = useState(null);
+  const [editRecordId, setEditRecordId] = useState(() => aer?.id ?? null);
   const [postedRecordId, setPostedRecordId] = useState(null);
   const [originalFormState, setOriginalFormState] = useState(null);
-  const [postVersion, setPostVersion] = useState(1);
+  const [postVersion, setPostVersion] = useState(() => _aerState?.postVersion || 1);
   const [todayAllRecords, setTodayAllRecords] = useState([]);
   const [prevLogs, setPrevLogs] = useState([]);
   const [prevLogsLoading, setPrevLogsLoading] = useState(true);
@@ -351,25 +418,27 @@ export default function StaffDashboard({
 
   // ── Load home-screen data + session restore ───────────────────────────────
   useEffect(() => {
-    // Try to restore an in-progress session from today
-    try {
-      const raw = localStorage.getItem(sessionKey);
-      if (raw) {
-        const saved = JSON.parse(raw);
-        if (saved.meta?.date === today()) {
-          if (saved.shift) {
-            setShift(saved.shift);
-            setWindowStatus(getWindowStatus(saved.shift));
+    // Skip session restore if we loaded an admin-edit record (don't overwrite it)
+    if (!aer) {
+      try {
+        const raw = localStorage.getItem(sessionKey);
+        if (raw) {
+          const saved = JSON.parse(raw);
+          if (saved.meta?.date === today()) {
+            if (saved.shift) {
+              setShift(saved.shift);
+              setWindowStatus(getWindowStatus(saved.shift));
+            }
+            if (saved.taskState) setTaskState(saved.taskState);
+            if (saved.meta) setMeta(saved.meta);
+            if (saved.rateShops) setRateShops(saved.rateShops);
+            showToast("✓ Progress restored");
+          } else {
+            localStorage.removeItem(sessionKey);
           }
-          if (saved.taskState) setTaskState(saved.taskState);
-          if (saved.meta) setMeta(saved.meta);
-          if (saved.rateShops) setRateShops(saved.rateShops);
-          showToast("✓ Progress restored");
-        } else {
-          localStorage.removeItem(sessionKey);
         }
-      }
-    } catch (e) {}
+      } catch (e) {}
+    }
 
     // Load home-screen data + today's DB records in parallel
     Promise.all([
@@ -413,6 +482,18 @@ export default function StaffDashboard({
       })
       .catch(() => setPrevLogsLoading(false));
   }, [shift]);
+
+  // Lock body scroll when preview modal is open
+  useEffect(() => {
+    document.body.style.overflow = showOutput ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [showOutput]);
+
+  // Show toast when an admin-edit record was loaded
+  useEffect(() => {
+    if (aer) showToast('✏️ Loaded for editing');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ── Auto-save ────────────────────────────────────────────────────────────
   const saveSession = useCallback(
@@ -488,7 +569,9 @@ export default function StaffDashboard({
   }
 
   function cancelEdit() {
+    clearAdminEditRecord();
     setEditRecordId(null);
+    setAdminEditRecord(null);
     setOriginalFormState(null);
     setPostVersion(1);
     setTaskState({});
@@ -656,7 +739,9 @@ export default function StaffDashboard({
     ];
     const val = (k) => meta[k] || "—";
     const naVersionSuffix = version ? ` (v${version})` : '';
-    let post = `## 🌙 Night Audit Shift Log — ${fmtDate(meta.date)}${naVersionSuffix}\n**Front Desk Agent:** ${agent.name}\n\n---\n`;
+    const naAgentName = adminEditRecord ? adminEditRecord.agent_name : agent.name;
+    const naEditedBy = adminEditRecord ? `\n**Edited by:** ${agent.name}` : '';
+    let post = `## 🌙 Night Audit Shift Log — ${fmtDate(meta.date)}${naVersionSuffix}\n**Front Desk Agent:** ${naAgentName}${naEditedBy}\n\n---\n`;
     post +=
       "\n### 📊 Hotel Statistics\n| Metric | Start Shift | Ending Day | **New Business Day** |\n|--------|-------------|------------|---------------------|\n";
     const fmtVal = (v, suffix) => v && v !== '—' ? `${v}${suffix || ''}` : v
@@ -790,14 +875,18 @@ export default function StaffDashboard({
     return post;
   }
 
+  const formatOcc = (val) => val ? val.replace(/(\d+(?:\.\d+)?)/g, '$1%') : '—'
+
   function buildPost(version = null) {
     if (shift === "night") return buildNightAuditPost(version);
     const shiftEmoji = shift === "morning" ? "☀️" : "🌅";
     const handoffTarget = shift === "morning" ? "Swing Shift" : "Night Audit";
     const versionSuffix = version ? ` (v${version})` : '';
-    let post = `## ${shiftEmoji} ${SHIFTS[shift].label} — ${fmtDate(meta.date)}${versionSuffix}\n**Front Desk Agent:** ${agent.name}\n\n---\n`;
+    const agentName = adminEditRecord ? adminEditRecord.agent_name : agent.name;
+    const editedBy = adminEditRecord ? `\n**Edited by:** ${agent.name}` : '';
+    let post = `## ${shiftEmoji} ${SHIFTS[shift].label} — ${fmtDate(meta.date)}${versionSuffix}\n**Front Desk Agent:** ${agentName}${editedBy}\n\n---\n`;
     post += "\n### 📊 Hotel Snapshot\n| Metric | Value |\n|--------|-------|\n";
-    post += `| Occupancy | ${meta.occ ? `${meta.occ}%` : "—"} |\n| ADR | $${meta.adr || "—"} |\n| Pending Arrivals | ${meta.pending || "0"} |\n| Today's Arrivals | ${meta.arrivals || "0"} |\n| Departures | ${meta.departures || "0"} |\n`;
+    post += `| Occupancy | ${formatOcc(meta.occ)} |\n| ADR | $${meta.adr || "—"} |\n| Pending Arrivals | ${meta.pending || "0"} |\n| Today's Arrivals | ${meta.arrivals || "0"} |\n| Departures | ${meta.departures || "0"} |\n`;
     post += "\n---\n";
     const activityRows = [
       hasPositiveNumber(meta.declined)
@@ -901,21 +990,16 @@ export default function StaffDashboard({
     const version = editRecordId && postVersion > 1 ? postVersion : null;
     setPostText(buildPost(version));
     setShowOutput(true);
-    setTimeout(
-      () =>
-        document
-          .getElementById("output-section")
-          ?.scrollIntoView({ behavior: "smooth" }),
-      50,
-    );
   }
   async function handleSubmitOnly() {
     if (shiftConflict && !editRecordId) return;
     setPostStatus("posting");
     try {
       await saveRecord();
+      clearAdminEditRecord();
       setPostStatus("success");
       setPosted(true);
+      setShowOutput(false);
       localStorage.removeItem(sessionKey);
     } catch (e) {
       setPostStatus("error");
@@ -952,9 +1036,11 @@ export default function StaffDashboard({
       ]);
 
       await saveRecord();
+      clearAdminEditRecord();
       setOriginalFormState(null);
       setPostStatus("success");
       setPosted(true);
+      setShowOutput(false);
       localStorage.removeItem(sessionKey);
     } catch (e) {
       setPostStatus("error");
@@ -964,9 +1050,11 @@ export default function StaffDashboard({
   }
   async function saveRecord() {
     const isNight = shift === "night";
+    // When an admin edits another agent's record, preserve the original agent identity
+    const isAdminEdit = !!(editRecordId && adminEditRecord);
     const record = {
-      agent_id: agent.id,
-      agent_name: agent.name,
+      agent_id:   isAdminEdit ? adminEditRecord.agent_id   : agent.id,
+      agent_name: isAdminEdit ? adminEditRecord.agent_name : agent.name,
       shift: SHIFTS[shift].label,
       date: meta.date || today(),
       occupancy: isNight ? meta.na_occ_n || meta.na_occ_s || "" : meta.occ,
@@ -989,7 +1077,7 @@ export default function StaffDashboard({
       rate_shops: rateShops,
     };
     if (editRecordId) {
-      await updateShiftRecord(editRecordId, record);
+      await updateShiftRecord(editRecordId, record, isAdminEdit ? agent.name : null);
       setPostedRecordId(editRecordId);
     } else {
       const newId = await saveShiftRecord(record);
@@ -1030,81 +1118,55 @@ export default function StaffDashboard({
           <div className="topbar-left">
             <div className="topbar-icon">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <rect
-                  x="2"
-                  y="3"
-                  width="14"
-                  height="12"
-                  rx="2"
-                  stroke="white"
-                  strokeWidth="1.4"
-                />
-                <path
-                  d="M5 3V1.5M13 3V1.5"
-                  stroke="white"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                />
-                <path d="M2 7h14" stroke="white" strokeWidth="1.2" />
-                <path
-                  d="M6 11l2 2 4-4"
-                  stroke="white"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                <rect x="2" y="3" width="14" height="12" rx="2" stroke="white" strokeWidth="1.4"/>
+                <path d="M5 3V1.5M13 3V1.5" stroke="white" strokeWidth="1.4" strokeLinecap="round"/>
+                <path d="M2 7h14" stroke="white" strokeWidth="1.2"/>
+                <path d="M6 11l2 2 4-4" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <div>
-              <div className="topbar-title">Home2 Suites · Front Desk</div>
-              <div className="topbar-sub">Las Vegas North</div>
+              <div className="topbar-title">Shift Checklist</div>
+              <div className="topbar-sub">Home2 Suites · Las Vegas North</div>
             </div>
-          </div>
-          <div className="topbar-right">
+            <div className="topbar-divider" />
             <div className="topbar-agent-badge">{agent.name}</div>
             <div className="topbar-progress">
               <div className="mini-bar">
-                <div
-                  className="mini-bar-fill"
-                  style={{ transform: `scaleX(${pct / 100})` }}
-                />
+                <div className="mini-bar-fill" style={{ transform: `scaleX(${pct / 100})` }} />
               </div>
               <span className="topbar-pct">{pct}%</span>
             </div>
+          </div>
+          <div className="topbar-right">
             {onBackToDashboard && (
-              <button
-                className="signout-btn"
-                style={{}}
-                onClick={onBackToDashboard}
-              >
+              <button className="signout-btn" onClick={onBackToDashboard}>
                 ← Dashboard
               </button>
             )}
             <ThemePicker agentId={agent.id} />
-            <button
-              className="signout-btn"
-              style={{}}
-              onClick={() => setShowFeedback(true)}
-            >
+            <button className="signout-btn" onClick={() => setShowFeedback(true)}>
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style={{ marginRight: 4, verticalAlign: 'middle' }}>
+                <path d="M12 1H2a1 1 0 00-1 1v7a1 1 0 001 1h2v2.5l3-2.5h5a1 1 0 001-1V2a1 1 0 00-1-1z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+              </svg>
               Feedback
             </button>
-            <button
-              className="signout-btn"
-              style={{}}
-              onClick={() => setShowPrior(true)}
-            >
+            <button className="signout-btn" onClick={() => setShowPrior(true)}>
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style={{ marginRight: 4, verticalAlign: 'middle' }}>
+                <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M7 4v3.5l2 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
               Prior Shifts
             </button>
-            <button
-              className="signout-btn"
-              style={{}}
-              onClick={onViewLogs}
-            >
+            <button className="signout-btn" onClick={onViewLogs}>
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style={{ marginRight: 4, verticalAlign: 'middle' }}>
+                <rect x="1" y="2" width="12" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M1 6h12" stroke="currentColor" strokeWidth="1"/>
+                <path d="M4 2V1M10 2V1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                <path d="M4 9h2M4 11h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+              </svg>
               Shift Logs
             </button>
-            <button className="signout-btn" onClick={onSignOut}>
-              Sign out
-            </button>
+            <button className="signout-btn" onClick={onSignOut}>Sign out</button>
           </div>
         </div>
 
@@ -1115,7 +1177,7 @@ export default function StaffDashboard({
             <div className={styles.greetRow}>
               <div>
                 <div className={styles.greetSub}>{getGreeting()},</div>
-                <div className={styles.greetName}>{agent.name}</div>
+                <div className={styles.greetName}>{adminEditRecord?.agent_name || agent.name}</div>
               </div>
               <div className={styles.greetDate}>{fmtDateLong(today())}</div>
             </div>
@@ -1242,7 +1304,7 @@ export default function StaffDashboard({
                 </div>
                 <div className={styles.choiceBtns}>
                   {choiceRecords.map((r) => {
-                    const canEdit = isEditWindowOpen(r.shift);
+                    const canEdit = agent.is_admin || isEditWindowOpen(r.shift);
                     return (
                       <button
                         key={r.id}
@@ -1285,13 +1347,13 @@ export default function StaffDashboard({
               {editRecordId && (
                 <div className={styles.editBanner}>
                   <span>
-                    <strong>✏️ Edit mode</strong> — updating your{" "}
-                    {SHIFTS[shift].label} log from {fmtDate(meta.date)}
+                    <strong>✏️ Edit mode</strong>
+                    {adminEditRecord
+                      ? <> — editing <strong>{adminEditRecord.agent_name}</strong>'s {SHIFTS[shift].label} from {fmtDate(meta.date)}</>
+                      : <> — updating your {SHIFTS[shift].label} log from {fmtDate(meta.date)}</>
+                    }
                   </span>
-                  <button
-                    className={styles.editBannerCancel}
-                    onClick={cancelEdit}
-                  >
+                  <button className={styles.editBannerCancel} onClick={cancelEdit}>
                     ✕ Cancel
                   </button>
                 </div>
@@ -1460,6 +1522,7 @@ export default function StaffDashboard({
                   onChange={handleRateShopsChange}
                   onVarianceAlert={handleVarianceAlert}
                   varianceThreshold={handoff?.variance_threshold ?? undefined}
+                  adminOverride={!!adminEditRecord}
                 />
               </div>
             </div>
@@ -1545,32 +1608,8 @@ export default function StaffDashboard({
                   >
                     {editRecordId ? "✦ Preview Update" : "✦ Preview Post"}
                   </button>
-                  {showOutput && !posted && (
-                    <button
-                      className={`btn btn-submit ${styles.actionBtn}`}
-                      onClick={handleSubmitOnly}
-                      disabled={
-                        postStatus === "posting" ||
-                        !!(shiftConflict && !editRecordId)
-                      }
-                    >
-                      {editRecordId ? "✓ Save Changes" : "✓ Submit"}
-                    </button>
-                  )}
-                  {showOutput && !posted && (
-                    <button
-                      className={`btn btn-success ${styles.actionBtn}`}
-                      onClick={handlePost}
-                      disabled={
-                        postStatus === "posting" ||
-                        !!(shiftConflict && !editRecordId)
-                      }
-                    >
-                      {editRecordId ? "▶ Save & Post" : "▶ Post to Teams"}
-                    </button>
-                  )}
                   {posted && postedRecordId && postStatus === "success" && (
-                    isEditWindowOpen(SHIFTS[shift].label) ? (
+                    (agent.is_admin || isEditWindowOpen(SHIFTS[shift].label)) ? (
                       <button
                         className={`btn btn-primary ${styles.actionBtn}`}
                         onClick={handleEditPostedLog}
@@ -1590,108 +1629,6 @@ export default function StaffDashboard({
           </div>
           {/* /dashGrid */}
 
-          {/* ── Full-width post preview ── */}
-          {showOutput && (
-            <div id="output-section" className={styles.outputSection}>
-              {agent.is_admin && (
-                <div className={styles.statRow}>
-                  <div className={styles.statBox}>
-                    <div className={styles.statNum}>{doneCount}</div>
-                    <div className={styles.statLbl}>Completed</div>
-                  </div>
-                  <div className={styles.statBox}>
-                    <div className={styles.statNum}>
-                      {tasks.length - doneCount}
-                    </div>
-                    <div className={styles.statLbl}>Not done</div>
-                  </div>
-                  <div className={styles.statBox}>
-                    <div className={styles.statNum}>
-                      {tasks.filter((t) => taskState[t.id]?.note).length}
-                    </div>
-                    <div className={styles.statLbl}>With notes</div>
-                  </div>
-                </div>
-              )}
-              <div className="card">
-                <div className={styles.cardHeader}>
-                  <span className={styles.cardTitle}>
-                    📋 Teams post preview
-                  </span>
-                  <button
-                    className="btn-sm"
-                    onClick={() =>
-                      copyToClipboard(
-                        agent.is_admin
-                          ? postText
-                          : filterManagerNotes(postText),
-                      )
-                    }
-                  >
-                    Copy
-                  </button>
-                </div>
-                <PostPreview
-                  text={
-                    agent.is_admin ? postText : filterManagerNotes(postText)
-                  }
-                />
-              </div>
-              <div className="card">
-                <div className={styles.cardHeader}>
-                  <span className={styles.cardTitle}>
-                    📄 Full checklist detail
-                  </span>
-                  <button
-                    className="btn-sm"
-                    onClick={() => {
-                      const text = tasks
-                        .map((t) => {
-                          const s = taskState[t.id] || {};
-                          const ts = s.timestamp
-                            ? ` — completed ${s.timestamp}`
-                            : "";
-                          return `[${s.done ? "X" : " "}] ${t.name} (${t.time})${ts}${s.note ? `\n      ↳ ${s.note}` : ""}`;
-                        })
-                        .join("\n");
-                      copyToClipboard(
-                        `${SHIFTS[shift].label} — ${agent.name}\n${"─".repeat(40)}\n${text}`,
-                      );
-                    }}
-                  >
-                    Copy as text
-                  </button>
-                </div>
-                {tasks.map((t) => {
-                  const s = taskState[t.id] || {};
-                  return (
-                    <div key={t.id} className={styles.summaryRow}>
-                      <span
-                        className={`badge ${s.done ? "badge-done" : "badge-skip"}`}
-                      >
-                        {s.done ? "Done" : "Skip"}
-                      </span>
-                      <div>
-                        <div className={styles.summaryName}>
-                          {t.name}{" "}
-                          <span className={styles.summaryTime}>({t.time})</span>
-                          {s.timestamp && (
-                            <span className={styles.summaryTs}>
-                              {" "}
-                              ⏱ {s.timestamp}
-                            </span>
-                          )}
-                        </div>
-                        {s.note && (
-                          <div className={styles.summaryNote}>↳ {s.note}</div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </div>
       {showPrior && (
@@ -1700,6 +1637,97 @@ export default function StaffDashboard({
       {showFeedback && (
         <FeedbackModal agent={agent} onClose={() => setShowFeedback(false)} />
       )}
+      {/* ── Preview modal ── */}
+      {showOutput && createPortal(
+        <div className={styles.previewOverlay} onClick={() => setShowOutput(false)}>
+          <div className={styles.previewModal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.previewModalHeader}>
+              <span className={styles.previewModalTitle}>📋 Preview Post</span>
+              <button className={styles.previewModalClose} onClick={() => setShowOutput(false)}>✕</button>
+            </div>
+            <div className={styles.previewModalBody}>
+              {agent.is_admin && (
+                <div className={styles.statRow}>
+                  <div className={styles.previewStatBox}>
+                    <div className={styles.statNum}>{doneCount}</div>
+                    <div className={styles.statLbl}>Completed</div>
+                  </div>
+                  <div className={styles.previewStatBox}>
+                    <div className={styles.statNum}>{tasks.length - doneCount}</div>
+                    <div className={styles.statLbl}>Not done</div>
+                  </div>
+                  <div className={styles.previewStatBox}>
+                    <div className={styles.statNum}>{tasks.filter((t) => taskState[t.id]?.note).length}</div>
+                    <div className={styles.statLbl}>With notes</div>
+                  </div>
+                </div>
+              )}
+              <div className="card">
+                <div className={styles.cardHeader}>
+                  <span className={styles.cardTitle}>Teams post preview</span>
+                  <button className="btn-sm" onClick={() => copyToClipboard(agent.is_admin ? postText : filterManagerNotes(postText))}>
+                    Copy
+                  </button>
+                </div>
+                <PostPreview text={agent.is_admin ? postText : filterManagerNotes(postText)} />
+              </div>
+              <div className="card">
+                <div className={styles.cardHeader}>
+                  <span className={styles.cardTitle}>📄 Full checklist detail</span>
+                  <button className="btn-sm" onClick={() => {
+                    const text = tasks.map((t) => {
+                      const s = taskState[t.id] || {};
+                      const ts = s.timestamp ? ` — completed ${s.timestamp}` : "";
+                      return `[${s.done ? "X" : " "}] ${t.name} (${t.time})${ts}${s.note ? `\n      ↳ ${s.note}` : ""}`;
+                    }).join("\n");
+                    copyToClipboard(`${SHIFTS[shift].label} — ${agent.name}\n${"─".repeat(40)}\n${text}`);
+                  }}>
+                    Copy as text
+                  </button>
+                </div>
+                {tasks.map((t) => {
+                  const s = taskState[t.id] || {};
+                  return (
+                    <div key={t.id} className={styles.summaryRow}>
+                      <span className={`badge ${s.done ? "badge-done" : "badge-skip"}`}>
+                        {s.done ? "Done" : "Skip"}
+                      </span>
+                      <div>
+                        <div className={styles.summaryName}>
+                          {t.name} <span className={styles.summaryTime}>({t.time})</span>
+                          {s.timestamp && <span className={styles.summaryTs}> ⏱ {s.timestamp}</span>}
+                        </div>
+                        {s.note && <div className={styles.summaryNote}>↳ {s.note}</div>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className={styles.previewModalFooter}>
+              <button
+                className="btn btn-submit"
+                onClick={handleSubmitOnly}
+                disabled={postStatus === "posting" || !!(shiftConflict && !editRecordId)}
+              >
+                {postStatus === "posting" ? "Saving…" : editRecordId ? "✓ Save Changes" : "✓ Submit"}
+              </button>
+              <button
+                className="btn btn-success"
+                onClick={handlePost}
+                disabled={postStatus === "posting" || !!(shiftConflict && !editRecordId)}
+              >
+                {postStatus === "posting" ? "Posting…" : editRecordId ? "▶ Save & Post" : "▶ Post to Teams"}
+              </button>
+              {postStatus === "error" && (
+                <span style={{ fontSize: 12, color: "var(--danger)", alignSelf: "center" }}>
+                  Something went wrong — please try again.
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      , document.body)}
     </>
   );
 }

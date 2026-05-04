@@ -317,7 +317,7 @@ export async function deleteShiftRecords(sessionToken, ids) {
   }
 }
 
-export async function updateShiftRecord(id, record) {
+export async function updateShiftRecord(id, record, editedByAdmin = null) {
   const { data: current, error: fetchError } = await supabase
     .from('shift_records')
     .select('post_text, submitted_at, edit_history')
@@ -329,6 +329,7 @@ export async function updateShiftRecord(id, record) {
     post_text: current.post_text,
     submitted_at: current.submitted_at,
     replaced_at: new Date().toISOString(),
+    ...(editedByAdmin ? { edited_by_admin: editedByAdmin } : {}),
   }
   const edit_history = [snapshot, ...(current.edit_history || [])]
 

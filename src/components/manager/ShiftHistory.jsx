@@ -51,7 +51,7 @@ function exportToCSV(records) {
   URL.revokeObjectURL(url)
 }
 
-function DetailRow({ record, tasks, expandedView, setExpandedView, rowId, isClosing, isSelected }) {
+function DetailRow({ record, tasks, expandedView, setExpandedView, rowId, isClosing, isSelected, onEditRecord }) {
   const view    = expandedView[rowId] || 'checklist'
   const setView = (v) => setExpandedView(prev => ({ ...prev, [rowId]: v }))
 
@@ -69,6 +69,13 @@ function DetailRow({ record, tasks, expandedView, setExpandedView, rowId, isClos
                 className={`${styles.detailTab} ${view === 'log' ? styles.detailTabActive : ''}`}
                 onClick={() => setView('log')}
               >Shift Log Post</button>
+              {onEditRecord && (
+                <button
+                  className={styles.detailTab}
+                  style={{ marginLeft: 'auto', color: 'var(--brand)' }}
+                  onClick={() => onEditRecord(record)}
+                >✏️ Edit Log</button>
+              )}
             </div>
 
             {view === 'checklist' && (
@@ -98,7 +105,7 @@ function DetailRow({ record, tasks, expandedView, setExpandedView, rowId, isClos
 
 const CLOSE_DURATION = 200
 
-export default function ShiftHistory({ records, agents, sessionToken, loading, onDelete }) {
+export default function ShiftHistory({ records, agents, sessionToken, loading, onDelete, onEditRecord }) {
   const [filterAgent, setFilterAgent]   = useState('')
   const [filterShift, setFilterShift]   = useState('')
   const [filterDays,  setFilterDays]    = useState('7')
@@ -327,6 +334,7 @@ export default function ShiftHistory({ records, agents, sessionToken, loading, o
                         record={r} tasks={tasks}
                         expandedView={expandedView} setExpandedView={setExpandedView}
                         rowId={rowId} isClosing={isClose} isSelected={isSel}
+                        onEditRecord={onEditRecord}
                       />
                     )
                   ]

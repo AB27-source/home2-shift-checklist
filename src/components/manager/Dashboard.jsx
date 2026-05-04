@@ -13,7 +13,7 @@ import RateShopHistory   from './RateShopHistory'
 import ThemePicker from '../ThemePicker'
 import styles from './Dashboard.module.css'
 
-export default function Dashboard({ agent, agents, sessionToken, onSignOut, showToast, onAgentsChange, handoff, onHandoffUpdate, shiftTasks, onShiftTasksChange, onLogShift }) {
+export default function Dashboard({ agent, agents, sessionToken, onSignOut, showToast, onAgentsChange, handoff, onHandoffUpdate, shiftTasks, onShiftTasksChange, onLogShift, onEditRecord }) {
   const [tab, setTab]           = useState('history')
   const [records, setRecords]   = useState([])
   const [loading, setLoading]   = useState(true)
@@ -181,6 +181,7 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
                 sessionToken={sessionToken}
                 loading={loading}
                 onDelete={ids => setRecords(prev => prev.filter(r => !ids.includes(r.id)))}
+                onEditRecord={onEditRecord}
               />
             </>
           )}

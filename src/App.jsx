@@ -3,6 +3,7 @@ import { SpeedInsights } from '@vercel/speed-insights/react'
 import { Analytics } from '@vercel/analytics/react'
 import { getAgents, getHandoff, getShiftTasks, restoreAgentSession, signOutAgentSession, isAppSessionError } from './lib/supabase'
 import { loadSavedTheme } from './lib/theme'
+import { setAdminEditRecord, clearAdminEditRecord } from './lib/adminEditRecord'
 import { SHIFTS } from './data/shifts'
 import LoginScreen     from './components/LoginScreen'
 import PinScreen       from './components/PinScreen'
@@ -195,7 +196,7 @@ export default function App() {
             onSignOut={handleSignOut}
             showToast={showToast}
             onHandoffUpdate={setHandoff}
-            onBackToDashboard={currentAgent.is_admin ? () => setScreen('manager') : undefined}
+            onBackToDashboard={currentAgent.is_admin ? () => { clearAdminEditRecord(); setScreen('manager') } : undefined}
           />
         )}
         {screen === 'logs' && currentAgent && (
@@ -216,7 +217,8 @@ export default function App() {
             onHandoffUpdate={setHandoff}
             shiftTasks={shiftTasks}
             onShiftTasksChange={setShiftTasks}
-            onLogShift={() => setScreen('home')}
+            onLogShift={() => { clearAdminEditRecord(); setScreen('home') }}
+            onEditRecord={(record) => { setAdminEditRecord(record); setScreen('home') }}
           />
         )}
       </PageTransition>

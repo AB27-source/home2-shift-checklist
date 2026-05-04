@@ -3,6 +3,10 @@ import styles from './RegularShiftForm.module.css'
 export default function RegularShiftForm({ meta, onMetaChange, shiftLabel }) {
   const f  = (key) => meta[key] || ''
   const ch = (key) => (e) => onMetaChange(key, e.target.value)
+  const chStrip   = (key, char) => (e) => onMetaChange(key, e.target.value.split(char).join(''))
+  const chNumeric = (key)       => (e) => onMetaChange(key, e.target.value.replace(/[^0-9.]/g, ''))
+  const chInt     = (key)       => (e) => onMetaChange(key, e.target.value.replace(/[^0-9]/g, ''))
+  const chOcc     = (key)       => (e) => onMetaChange(key, e.target.value.replace(/[^0-9.\/ O]/g, ''))
 
   const outOfOrderCount = parseInt(meta.ooo) || 0
   const guestReqCount = parseInt(meta.guest_req) || 0
@@ -30,33 +34,41 @@ export default function RegularShiftForm({ meta, onMetaChange, shiftLabel }) {
         <div className={styles.statsGrid}>
           <div className={`field ${styles.occField}`}>
             <label>Occupancy %</label>
-            <input
-              type="text"
-              placeholder="e.g. 63.64% / 61.54% OOO"
-              value={f('occ')}
-              onChange={ch('occ')}
-            />
+            <div className={styles.inputWrap}>
+              <input
+                type="text"
+                placeholder="e.g. 63.64 / 61.54 OOO"
+                value={f('occ')}
+                onChange={chOcc('occ')}
+                style={{ paddingRight: 24 }}
+              />
+              <span className={`${styles.inputSymbol} ${styles.inputSymbolRight}`}>%</span>
+            </div>
           </div>
           <div className="field">
             <label>ADR ($)</label>
-            <input
-              type="text"
-              placeholder="e.g. 157.40"
-              value={f('adr')}
-              onChange={ch('adr')}
-            />
+            <div className={styles.inputWrap}>
+              <span className={`${styles.inputSymbol} ${styles.inputSymbolLeft}`}>$</span>
+              <input
+                type="text"
+                placeholder=""
+                value={f('adr')}
+                onChange={chNumeric('adr')}
+                style={{ paddingLeft: 22 }}
+              />
+            </div>
           </div>
           <div className="field">
             <label>Pending Arrivals</label>
-            <input type="number" min="0" placeholder="0" value={f('pending')} onChange={ch('pending')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('pending')} onChange={chInt('pending')} />
           </div>
           <div className="field">
             <label>Today's Arrivals</label>
-            <input type="number" min="0" placeholder="0" value={f('arrivals')} onChange={ch('arrivals')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('arrivals')} onChange={chInt('arrivals')} />
           </div>
           <div className="field">
             <label>Departures</label>
-            <input type="number" min="0" placeholder="0" value={f('departures')} onChange={ch('departures')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('departures')} onChange={chInt('departures')} />
           </div>
         </div>
       </div>
@@ -73,19 +85,19 @@ export default function RegularShiftForm({ meta, onMetaChange, shiftLabel }) {
         <div className={styles.actGrid}>
           <div className="field">
             <label>Declined Payments</label>
-            <input type="number" min="0" placeholder="0" value={f('declined')} onChange={ch('declined')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('declined')} onChange={chInt('declined')} />
           </div>
           <div className="field">
             <label>Out of Order Room Count</label>
-            <input type="number" min="0" value={f('ooo')} onChange={ch('ooo')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('ooo')} onChange={chInt('ooo')} />
           </div>
           <div className="field">
             <label>Guest Requests</label>
-            <input type="number" min="0" placeholder="0" value={f('guest_req')} onChange={ch('guest_req')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('guest_req')} onChange={chInt('guest_req')} />
           </div>
           <div className="field">
             <label>Rate Adj / Refunds</label>
-            <input type="number" min="0" placeholder="0" value={f('refunds')} onChange={ch('refunds')} />
+            <input type="text" inputMode="numeric" placeholder="0" value={f('refunds')} onChange={chInt('refunds')} />
           </div>
         </div>
         {/* Out of Order Room detail - expands when count > 0 */}
