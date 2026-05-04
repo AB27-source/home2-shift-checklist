@@ -239,6 +239,14 @@ export async function getFeedback() {
   return data || []
 }
 
+export async function resolveFeedback(id) {
+  const { error } = await supabase
+    .from('feedback')
+    .update({ resolved: true })
+    .eq('id', id)
+  if (error) throw error
+}
+
 // ── Rate Variance Alerts ─────────────────────
 export async function saveVarianceAlert({ agentId, agentName, shift, date, hotel, period, startRate, newRate }) {
   const { error } = await supabase

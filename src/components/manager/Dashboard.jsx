@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getShiftRecords, setHandoff, getTodayVarianceAlerts, subscribeVarianceAlerts, getFeedback } from '../../lib/supabase'
+import { getShiftRecords, setHandoff, getTodayVarianceAlerts, subscribeVarianceAlerts, getFeedback, resolveFeedback } from '../../lib/supabase'
 import { VARIANCE_THRESHOLD, PERIOD_LABELS } from '../../data/rateShop'
 import FeedbackModal from '../FeedbackModal'
 import ShiftHistory      from './ShiftHistory'
@@ -37,6 +37,11 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
   useEffect(() => {
     getFeedback().then(setFeedbackList).catch(() => {})
   }, [])
+
+  async function handleResolveFeedback(id) {
+    await resolveFeedback(id)
+    setFeedbackList(prev => prev.map(f => f.id === id ? { ...f, resolved: true } : f))
+  }
 
   useEffect(() => {
     getTodayVarianceAlerts().then(setVarianceAlerts).catch(() => {})
@@ -114,7 +119,7 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
             <button className={`${styles.tab} ${tab === 'checklist' ? styles.active : ''}`} onClick={() => setTab('checklist')}>Checklist</button>
             {agent?.is_super_admin && (
               <button className={`${styles.tab} ${tab === 'feedback' ? styles.active : ''}`} onClick={() => setTab('feedback')}>
-                Feedback{feedbackList.length > 0 && <span className={styles.tabBadge}>{feedbackList.length}</span>}
+                Feedback{feedbackList.filter(f => !f.resolved).length > 0 && <span className={styles.tabBadge}>{feedbackList.filter(f => !f.resolved).length}</span>}
               </button>
             )}
           </div>
@@ -269,7 +274,7 @@ export default function Dashboard({ agent, agents, sessionToken, onSignOut, show
             />
           )}
           {tab === 'feedback' && (
-            <FeedbackTab items={feedbackList} />
+            <FeedbackTab items={feedbackList} onResolve={handleResolveFeedback} />
           )}
         </div>
       </div>
@@ -292,7 +297,65 @@ const FILE_ICONS = {
 }
 function getIcon(name) { return FILE_ICONS[(name?.split('.').pop() || '').toLowerCase()] || '📎' }
 
-function FeedbackTab({ items }) {
+function FeedbackCard({ item, onResolve }) {
+  const [resolving, setResolving] = useState(false)
+  const time = new Date(item.created_at).toLocaleString([], {
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  })
+  async function handleResolve() {
+    setResolving(true)
+    try { await onResolve(item.id) } finally { setResolving(false) }
+  }
+  return (
+    <div className="card" style={{ padding: '14px 16px', opacity: item.resolved ? 0.55 : 1, transition: 'opacity 0.2s' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <strong style={{ fontSize: 13 }}>{item.agent_name}</strong>
+          <span style={{ fontSize: 11, color: 'var(--muted)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 20, padding: '1px 8px' }}>{item.agent_role || 'Staff'}</span>
+          {item.resolved && (
+            <span style={{ fontSize: 11, color: '#22a06b', background: '#e3fcef', border: '1px solid #abf5d1', borderRadius: 20, padding: '1px 8px', fontWeight: 600 }}>✓ Done</span>
+          )}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 11, color: 'var(--muted)' }}>{time}</span>
+          {!item.resolved && (
+            <button
+              onClick={handleResolve}
+              disabled={resolving}
+              style={{ fontSize: 11, fontWeight: 600, color: '#22a06b', background: '#e3fcef', border: '1px solid #abf5d1', borderRadius: 20, padding: '3px 10px', cursor: 'pointer', opacity: resolving ? 0.6 : 1 }}
+            >
+              {resolving ? 'Saving…' : '✓ Mark done'}
+            </button>
+          )}
+        </div>
+      </div>
+      <p style={{ fontSize: 13, lineHeight: 1.65, whiteSpace: 'pre-wrap', marginBottom: item.attachments?.length ? 10 : 0 }}>
+        {item.message}
+      </p>
+      {item.attachments?.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+          {item.attachments.map((a, i) => (
+            <a
+              key={i}
+              href={a.url}
+              target="_blank"
+              rel="noreferrer"
+              style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--brand)', background: 'var(--brand-light)', borderRadius: 20, padding: '3px 10px', textDecoration: 'none' }}
+            >
+              {getIcon(a.name)} {a.name}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function FeedbackTab({ items, onResolve }) {
+  const open     = items.filter(f => !f.resolved)
+  const resolved = items.filter(f =>  f.resolved)
+
   if (!items.length) return (
     <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>
       No feedback submitted yet.
@@ -300,41 +363,15 @@ function FeedbackTab({ items }) {
   )
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      {items.map(item => {
-        const time = new Date(item.created_at).toLocaleString([], {
-          month: 'short', day: 'numeric', year: 'numeric',
-          hour: '2-digit', minute: '2-digit',
-        })
-        return (
-          <div key={item.id} className="card" style={{ padding: '14px 16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <strong style={{ fontSize: 13 }}>{item.agent_name}</strong>
-                <span style={{ fontSize: 11, color: 'var(--muted)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 20, padding: '1px 8px' }}>{item.agent_role || 'Staff'}</span>
-              </div>
-              <span style={{ fontSize: 11, color: 'var(--muted)' }}>{time}</span>
-            </div>
-            <p style={{ fontSize: 13, lineHeight: 1.65, whiteSpace: 'pre-wrap', marginBottom: item.attachments?.length ? 10 : 0 }}>
-              {item.message}
-            </p>
-            {item.attachments?.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
-                {item.attachments.map((a, i) => (
-                  <a
-                    key={i}
-                    href={a.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--brand)', background: 'var(--brand-light)', borderRadius: 20, padding: '3px 10px', textDecoration: 'none' }}
-                  >
-                    {getIcon(a.name)} {a.name}
-                  </a>
-                ))}
-              </div>
-            )}
+      {open.map(item => <FeedbackCard key={item.id} item={item} onResolve={onResolve} />)}
+      {resolved.length > 0 && (
+        <>
+          <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--muted)', marginTop: 8 }}>
+            Resolved ({resolved.length})
           </div>
-        )
-      })}
+          {resolved.map(item => <FeedbackCard key={item.id} item={item} onResolve={onResolve} />)}
+        </>
+      )}
     </div>
   )
 }
