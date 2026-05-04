@@ -122,7 +122,10 @@ export async function updateAgent(sessionToken, id, fields) {
 }
 
 export async function saveAgentTheme(agentId, theme) {
-  const { error } = await supabase.from('agents').update({ theme }).eq('id', agentId)
+  const { error } = await supabase.rpc('save_agent_theme', {
+    p_agent_id: agentId,
+    p_theme: theme,
+  })
   if (error) throw error
 }
 

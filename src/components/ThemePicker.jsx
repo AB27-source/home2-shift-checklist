@@ -22,7 +22,7 @@ export default function ThemePicker({ agentId }) {
 
   function handlePreset(theme) {
     saveTheme(agentId, theme)
-    saveAgentTheme(agentId, theme).catch(() => {})
+    saveAgentTheme(agentId, theme).catch(err => console.error('[ThemePicker] saveAgentTheme failed:', err, { agentId, theme }))
     setCustomColor(theme.brand)
     setOpen(false)
   }
@@ -31,10 +31,9 @@ export default function ThemePicker({ agentId }) {
     setCustomColor(hex)
     const theme = deriveTheme(hex)
     saveTheme(agentId, theme)
-    // Debounce DB write — color picker fires on every drag pixel
     clearTimeout(dbSaveTimer.current)
     dbSaveTimer.current = setTimeout(() => {
-      saveAgentTheme(agentId, theme).catch(() => {})
+      saveAgentTheme(agentId, theme).catch(err => console.error('[ThemePicker] saveAgentTheme failed:', err, { agentId, theme }))
     }, 600)
   }
 
